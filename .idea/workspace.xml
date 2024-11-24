@@ -23,6 +23,7 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;React Native.iOS.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
@@ -32,6 +33,7 @@
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_interpreter_path&quot;: &quot;/Users/markmanipula/Library/Application Support/JetBrains/WebStorm2024.3/node/versions/20.15.0/bin/node&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/markmanipula/Desktop/Personal Projects/QuickCourt/node_modules/typescript/lib&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -77,6 +79,7 @@
       <workItem from="1732266811678" duration="525000" />
       <workItem from="1732348181082" duration="126000" />
       <workItem from="1732437572897" duration="218000" />
+      <workItem from="1732437797091" duration="2465000" />
     </task>
     <servers />
   </component>
