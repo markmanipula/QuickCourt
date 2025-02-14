@@ -1,26 +1,12 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text } from "react-native";
+import Button from "../components/Button";
 
 export default function Page() {
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Hello, QuickCourt!!</Text>
-            <Text style={styles.subtitle}>Welcome to your first page.</Text>
+        <View>
+            <Text>Hello, QuickCourt!</Text>
+            <Button title="Create Event" onPress={() => alert("Creating...")} />
+            <Button title="Join Event" onPress={() => alert("Joining...")} />
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    title: {
-        fontSize: 32,
-        fontWeight: "bold",
-    },
-    subtitle: {
-        fontSize: 18,
-        color: "#666",
-    },
-});
