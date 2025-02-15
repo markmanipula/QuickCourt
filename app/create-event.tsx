@@ -11,7 +11,7 @@ export default function CreateEventScreen() {
     const [details, setDetails] = useState("");
 
     const handleSubmit = () => {
-        if (!eventName || !address || !date || !time) {
+        if (!eventName || !address || !date || !time || !details) {
             alert("Please fill out all fields.");
             return;
         }
@@ -24,6 +24,8 @@ export default function CreateEventScreen() {
 
     return (
         <View style={{ padding: 20 }}>
+            <Button title="Go Back" onPress={() => router.back()} />
+
             <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 10 }}>Create a New Event</Text>
 
             <TextInput
