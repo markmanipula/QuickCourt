@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3ccaedd3-7f2f-4ef7-9a75-1e66d1213569" name="Changes" comment="" />
+    <list default="true" id="3ccaedd3-7f2f-4ef7-9a75-1e66d1213569" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/index.tsx" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -43,7 +47,10 @@
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/app" />
+      <recent name="$PROJECT_DIR$/src/screens" />
       <recent name="$PROJECT_DIR$/src" />
+      <recent name="$PROJECT_DIR$/screens" />
     </key>
   </component>
   <component name="RunManager" selected="React Native.iOS">
@@ -91,6 +98,7 @@
       <workItem from="1732437797091" duration="2465000" />
       <workItem from="1732476251794" duration="111000" />
       <workItem from="1739516891433" duration="2514000" />
+      <workItem from="1739602411355" duration="2353000" />
     </task>
     <servers />
   </component>

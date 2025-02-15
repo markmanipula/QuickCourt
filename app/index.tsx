@@ -1,12 +1,14 @@
-import { View, Text } from "react-native";
-import Button from "../components/Button";
+import { View, Text, Button } from "react-native";
+import { useRouter } from "expo-router";  // Import useRouter
 
-export default function Page() {
+export default function HomeScreen() {
+    const router = useRouter();  // Initialize router
+
     return (
         <View>
             <Text>Hello, QuickCourt!</Text>
-            <Button title="Create Event" onPress={() => alert("Creating...")} />
-            <Button title="Join Event" onPress={() => alert("Joining...")} />
+            <Button title="Create event" onPress={() => router.push("/create-event")} />
+            <Button title="View existing events" onPress={() => alert("Viewing events...")} />
         </View>
     );
 }
