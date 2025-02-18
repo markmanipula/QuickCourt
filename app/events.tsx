@@ -1,37 +1,66 @@
-// events.tsx
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import {router, useRouter} from "expo-router";
-import React from "react";
-
-// Dummy data for events (you can fetch from an API or database)
-const events = [
-    { id: '1', title: 'Volleyball Match', location: 'Court 1', date: '02/15/2025', time: '5:00 PM', details: 'Exciting match!' },
-    { id: '2', title: 'Beach Volleyball', location: 'Beach Court', date: '02/20/2025', time: '10:00 AM', details: 'Come join the fun!' },
-];
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
+import { useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
 
 export default function EventsPage() {
     const router = useRouter();
+    const [events, setEvents] = useState<any[]>([]);  // State to store events
+    const [loading, setLoading] = useState(true);  // Loading state
+    const [error, setError] = useState<string | null>(null);  // Error state
 
-    const handleEventClick = (eventId) => {
-        router.push({
-            pathname: '/event-details',
-            params: { eventId }
-        });
+    useEffect(() => {
+        // Fetch events from the backend
+        const fetchEvents = async () => {
+            try {
+                const response = await fetch('http://10.0.0.9:5001/events');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch events');
+                }
+                const data = await response.json();
+                setEvents(data);  // Set events data to state
+            } catch (err) {
+                setError('Failed to fetch events');
+                console.error(err);
+            } finally {
+                setLoading(false);  // Set loading state to false
+            }
+        };
+
+        fetchEvents();  // Fetch events on component mount
+    }, []);
+
+    const handleEventClick = (eventId: string) => {
+        router.push(`/events/${eventId}`);  // Pass eventId as part of the URL
     };
+
+    if (loading) {
+        return (
+            <View style={styles.container}>
+                <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+        );
+    }
+
+    if (error) {
+        return (
+            <View style={styles.container}>
+                <Text style={styles.errorText}>{error}</Text>
+            </View>
+        );
+    }
 
     return (
         <View style={styles.container}>
             <Text style={styles.header}>All Events</Text>
             {events.map((event) => (
                 <TouchableOpacity
-                    key={event.id}
+                    key={event._id}  // Use event._id for the key
                     style={styles.eventItem}
-                    onPress={() => handleEventClick(event.id)}
+                    onPress={() => handleEventClick(event._id)}  // Pass event._id to event details screen
                 >
                     <Text>{event.title}</Text>
                     <Text>{event.location}</Text>
-                    <Text>{event.date}</Text>
-                    <Text>{event.time}</Text>
+                    <Text>{new Date(event.date).toLocaleDateString()}</Text>  {/* Format the date */}
                 </TouchableOpacity>
             ))}
 
@@ -66,5 +95,10 @@ const styles = StyleSheet.create({
     },
     backButtonText: {
         color: "#000",
+    },
+    errorText: {
+        color: 'red',
+        fontSize: 18,
+        textAlign: 'center',
     },
 });
