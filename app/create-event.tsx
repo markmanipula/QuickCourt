@@ -7,6 +7,7 @@ export default function CreateEventScreen() {
     const [title, setTitle] = useState(""); // Change to title
     const [location, setLocation] = useState("");
     const [date, setDate] = useState("");
+    const [cost, setCost] = useState("");
     const [maxParticipants, setMaxParticipants] = useState(""); // Change to maxParticipants
     const [details, setDetails] = useState("");
 
@@ -35,7 +36,7 @@ export default function CreateEventScreen() {
     };
 
     const handleSubmit = async () => {
-        if (!title || !location || !date || !maxParticipants) {
+        if (!title || !location || !date || !maxParticipants || !cost) {
             alert("Please fill out all required fields.");
             return;
         }
@@ -44,7 +45,8 @@ export default function CreateEventScreen() {
             title, // Change to title
             location: location,
             date,
-            maxParticipants: parseInt(maxParticipants, 10), // Change to maxParticipants
+            maxParticipants: maxParticipants,
+            cost: cost,
             details: details || "N/A", // Optional details field
         };
 
@@ -68,7 +70,7 @@ export default function CreateEventScreen() {
             const data = await response.json();
             console.log("Event created successfully:", data);
 
-            alert(`Event Created:\n\nTitle: ${data.title}\nAddress: ${data.address}\nDate: ${data.date}\nMax Participants: ${data.maxParticipants}\nDetails: ${data.details || "N/A"}`);
+            alert(`Event Created:\n\nTitle: ${data.title}\nAddress: ${data.location}\nDate: ${data.date}\nMax Participants: ${data.maxParticipants}\nCost: ${data.cost}\nDetails: ${data.details || "N/A"}`);
             router.back();
         } catch (error) {
             console.error("Error creating event:", error);
@@ -113,6 +115,15 @@ export default function CreateEventScreen() {
                 placeholder="Enter max participants"
                 value={maxParticipants} // Change to maxParticipants
                 onChangeText={setMaxParticipants} // Change to setMaxParticipants
+                keyboardType="numeric"
+                style={styles.input}
+            />
+
+            <Text style={styles.label}>Cost ($)</Text> {/* New Cost Input */}
+            <TextInput
+                placeholder="Enter cost"
+                value={cost}
+                onChangeText={setCost}
                 keyboardType="numeric"
                 style={styles.input}
             />
