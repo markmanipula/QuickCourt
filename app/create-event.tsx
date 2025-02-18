@@ -40,15 +40,41 @@ export default function CreateEventScreen() {
         setDate(formattedDate);
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!eventName || !address || !date || !time || !members) {
             alert("Please fill out all required fields.");
             return;
         }
 
-        alert(`Event Created:\n\nName: ${eventName}\nAddress: ${address}\nDate: ${date}\nTime: ${time}\nMembers: ${members}\nDetails: ${details || "N/A"}`);
+        const eventData = {
+            eventName,
+            address,
+            date,
+            time,
+            members: parseInt(members, 10), // Assuming members is a number, adjust based on your backend schema
+            details: details || "N/A",
+        };
 
-        router.back(); // Navigate back after creating event
+        try {
+            const response = await fetch("http://your-backend-url.com/events", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(eventData),
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to create event");
+            }
+
+            const data = await response.json();
+            alert(`Event Created:\n\nName: ${data.eventName}\nAddress: ${data.address}\nDate: ${data.date}\nTime: ${data.time}\nMembers: ${data.members}\nDetails: ${data.details || "N/A"}`);
+            router.back(); // Navigate back after creating event
+        } catch (error) {
+            console.error(error);
+            alert("Error creating event. Please try again.");
+        }
     };
 
     return (
