@@ -4,30 +4,24 @@ import { useRouter } from "expo-router";
 
 export default function CreateEventScreen() {
     const router = useRouter();
-    const [eventName, setEventName] = useState("");
-    const [address, setAddress] = useState("");
+    const [title, setTitle] = useState(""); // Change to title
+    const [location, setLocation] = useState("");
     const [date, setDate] = useState("");
-    const [time, setTime] = useState("");
-    const [members, setMembers] = useState("");
+    const [maxParticipants, setMaxParticipants] = useState(""); // Change to maxParticipants
     const [details, setDetails] = useState("");
 
     // Helper function to format date input as MM/DD/YYYY
     const formatDateInput = (text: string) => {
-        // Remove all non-numeric characters
         let cleaned = text.replace(/\D/g, "");
-
-        // Handle deletion by allowing a cleared state
         if (cleaned.length === 0) {
             setDate("");
             return;
         }
 
-        // Limit input to 8 digits (MMDDYYYY)
         if (cleaned.length > 8) {
             cleaned = cleaned.slice(0, 8);
         }
 
-        // Apply formatting
         let formattedDate = "";
         if (cleaned.length <= 2) {
             formattedDate = cleaned;
@@ -41,22 +35,22 @@ export default function CreateEventScreen() {
     };
 
     const handleSubmit = async () => {
-        if (!eventName || !address || !date || !time || !members) {
+        if (!title || !location || !date || !maxParticipants) {
             alert("Please fill out all required fields.");
             return;
         }
 
         const eventData = {
-            eventName,
-            address,
+            title, // Change to title
+            location: location,
             date,
-            time,
-            members: parseInt(members, 10), // Assuming members is a number, adjust based on your backend schema
-            details: details || "N/A",
+            maxParticipants: parseInt(maxParticipants, 10), // Change to maxParticipants
+            details: details || "N/A", // Optional details field
         };
 
         try {
-            const response = await fetch("http://your-backend-url.com/events", {
+            console.log("Logging event data:", eventData);
+            const response = await fetch("http://10.0.0.9:5001/events", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -65,14 +59,19 @@ export default function CreateEventScreen() {
             });
 
             if (!response.ok) {
-                throw new Error("Failed to create event");
+                console.log(response);
+                const errorText = await response.text();
+                console.error("Error response:", errorText);
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
 
             const data = await response.json();
-            alert(`Event Created:\n\nName: ${data.eventName}\nAddress: ${data.address}\nDate: ${data.date}\nTime: ${data.time}\nMembers: ${data.members}\nDetails: ${data.details || "N/A"}`);
-            router.back(); // Navigate back after creating event
+            console.log("Event created successfully:", data);
+
+            alert(`Event Created:\n\nTitle: ${data.title}\nAddress: ${data.address}\nDate: ${data.date}\nMax Participants: ${data.maxParticipants}\nDetails: ${data.details || "N/A"}`);
+            router.back();
         } catch (error) {
-            console.error(error);
+            console.error("Error creating event:", error);
             alert("Error creating event. Please try again.");
         }
     };
@@ -83,19 +82,19 @@ export default function CreateEventScreen() {
 
             <Text style={styles.heading}>Create a New Event</Text>
 
-            <Text style={styles.label}>Event Name</Text>
+            <Text style={styles.label}>Event Title</Text> {/* Change to Event Title */}
             <TextInput
-                placeholder="Enter event name"
-                value={eventName}
-                onChangeText={setEventName}
+                placeholder="Enter event title"
+                value={title} // Change to title
+                onChangeText={setTitle} // Change to setTitle
                 style={styles.input}
             />
 
             <Text style={styles.label}>Address</Text>
             <TextInput
                 placeholder="Enter address"
-                value={address}
-                onChangeText={setAddress}
+                value={location}
+                onChangeText={setLocation}
                 style={styles.input}
             />
 
@@ -106,22 +105,14 @@ export default function CreateEventScreen() {
                 onChangeText={formatDateInput}
                 keyboardType="numeric"
                 style={styles.input}
-                maxLength={10} // Prevents excessive input
+                maxLength={10}
             />
 
-            <Text style={styles.label}>Time</Text>
+            <Text style={styles.label}>Max Participants</Text> {/* Change to Max Participants */}
             <TextInput
-                placeholder="HH:MM AM/PM"
-                value={time}
-                onChangeText={setTime}
-                style={styles.input}
-            />
-
-            <Text style={styles.label}>Number of Members</Text>
-            <TextInput
-                placeholder="Enter number of members"
-                value={members}
-                onChangeText={setMembers}
+                placeholder="Enter max participants"
+                value={maxParticipants} // Change to maxParticipants
+                onChangeText={setMaxParticipants} // Change to setMaxParticipants
                 keyboardType="numeric"
                 style={styles.input}
             />
