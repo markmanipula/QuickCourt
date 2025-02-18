@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Button } from "react-native";
+import { View, Text, TextInput, Button, StyleSheet } from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
 
@@ -8,52 +8,101 @@ export default function CreateEventScreen() {
     const [address, setAddress] = useState("");
     const [date, setDate] = useState("");
     const [time, setTime] = useState("");
+    const [members, setMembers] = useState("");
     const [details, setDetails] = useState("");
 
-    const handleSubmit = () => {
-        if (!eventName || !address || !date || !time || !details) {
-            alert("Please fill out all fields.");
+    // Helper function to format date input as MM/DD/YYYY
+    const formatDateInput = (text: string) => {
+        // Remove all non-numeric characters
+        let cleaned = text.replace(/\D/g, "");
+
+        // Handle deletion by allowing a cleared state
+        if (cleaned.length === 0) {
+            setDate("");
             return;
         }
 
-        // TODO: Send event data to backend
-        alert(`Event Created:\n\nName: ${eventName}\nAddress: ${address}\nDate: ${date}\nTime: ${time}\nDetails: ${details}`);
+        // Limit input to 8 digits (MMDDYYYY)
+        if (cleaned.length > 8) {
+            cleaned = cleaned.slice(0, 8);
+        }
 
-        router.back(); // Navigate back to home after creating event
+        // Apply formatting
+        let formattedDate = "";
+        if (cleaned.length <= 2) {
+            formattedDate = cleaned;
+        } else if (cleaned.length <= 4) {
+            formattedDate = `${cleaned.slice(0, 2)}/${cleaned.slice(2)}`;
+        } else {
+            formattedDate = `${cleaned.slice(0, 2)}/${cleaned.slice(2, 4)}/${cleaned.slice(4)}`;
+        }
+
+        setDate(formattedDate);
+    };
+
+    const handleSubmit = () => {
+        if (!eventName || !address || !date || !time || !members) {
+            alert("Please fill out all required fields.");
+            return;
+        }
+
+        alert(`Event Created:\n\nName: ${eventName}\nAddress: ${address}\nDate: ${date}\nTime: ${time}\nMembers: ${members}\nDetails: ${details || "N/A"}`);
+
+        router.back(); // Navigate back after creating event
     };
 
     return (
-        <View style={{ padding: 20 }}>
+        <View style={styles.container}>
             <Button title="Go Back" onPress={() => router.back()} />
 
-            <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 10 }}>Create a New Event</Text>
+            <Text style={styles.heading}>Create a New Event</Text>
 
+            <Text style={styles.label}>Event Name</Text>
             <TextInput
-                placeholder="Event Name"
+                placeholder="Enter event name"
                 value={eventName}
                 onChangeText={setEventName}
                 style={styles.input}
             />
+
+            <Text style={styles.label}>Address</Text>
             <TextInput
-                placeholder="Address"
+                placeholder="Enter address"
                 value={address}
                 onChangeText={setAddress}
                 style={styles.input}
             />
+
+            <Text style={styles.label}>Date</Text>
             <TextInput
-                placeholder="Date (YYYY-MM-DD)"
+                placeholder="MM/DD/YYYY"
                 value={date}
-                onChangeText={setDate}
+                onChangeText={formatDateInput}
+                keyboardType="numeric"
                 style={styles.input}
+                maxLength={10} // Prevents excessive input
             />
+
+            <Text style={styles.label}>Time</Text>
             <TextInput
-                placeholder="Time (HH:MM AM/PM)"
+                placeholder="HH:MM AM/PM"
                 value={time}
                 onChangeText={setTime}
                 style={styles.input}
             />
+
+            <Text style={styles.label}>Number of Members</Text>
             <TextInput
-                placeholder="Details"
+                placeholder="Enter number of members"
+                value={members}
+                onChangeText={setMembers}
+                keyboardType="numeric"
+                style={styles.input}
+            />
+
+            <Text style={styles.label}>Details (Optional)</Text>
+            <TextInput
+                placeholder="Enter additional details"
                 value={details}
                 onChangeText={setDetails}
                 multiline
@@ -66,12 +115,25 @@ export default function CreateEventScreen() {
     );
 }
 
-const styles = {
+const styles = StyleSheet.create({
+    container: {
+        padding: 20,
+    },
+    heading: {
+        fontSize: 20,
+        fontWeight: "bold",
+        marginBottom: 20,
+    },
+    label: {
+        fontSize: 16,
+        fontWeight: "bold",
+        marginBottom: 5,
+    },
     input: {
         borderWidth: 1,
         borderColor: "#ccc",
         padding: 10,
-        marginBottom: 10,
+        marginBottom: 15,
         borderRadius: 5,
     },
-};
+});
