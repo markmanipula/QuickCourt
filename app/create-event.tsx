@@ -1,6 +1,7 @@
 import { View, Text, TextInput, Button, StyleSheet } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function CreateEventScreen() {
     const router = useRouter();
@@ -10,6 +11,17 @@ export default function CreateEventScreen() {
     const [cost, setCost] = useState("");
     const [maxParticipants, setMaxParticipants] = useState(""); // Change to maxParticipants
     const [details, setDetails] = useState("");
+    const [organizer, setOrganizer] = useState<any>(null); // State to hold user info
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            const storedUser = await AsyncStorage.getItem("username");
+            if (storedUser) {
+                setOrganizer(storedUser);
+            }
+        };
+        fetchUser();
+    }, []);
 
     // Helper function to format date input as MM/DD/YYYY
     const formatDateInput = (text: string) => {
@@ -36,18 +48,19 @@ export default function CreateEventScreen() {
     };
 
     const handleSubmit = async () => {
-        if (!title || !location || !date || !maxParticipants || !cost) {
+        if (!title || !location || !date || !maxParticipants || !cost || !organizer) {
             alert("Please fill out all required fields.");
             return;
         }
 
         const eventData = {
             title, // Change to title
-            location: location,
+            location,
             date,
-            maxParticipants: maxParticipants,
-            cost: cost,
+            maxParticipants,
+            cost,
             details: details || "N/A", // Optional details field
+            organizer
         };
 
         try {
@@ -70,8 +83,7 @@ export default function CreateEventScreen() {
             const data = await response.json();
             console.log("Event created successfully:", data);
 
-            alert(`Event Created:\n\nTitle: ${data.title}\nAddress: ${data.location}\nDate: ${data.date}\nMax Participants: ${data.maxParticipants}\nCost: ${data.cost}\nDetails: ${data.details || "N/A"}`);
-            router.back();
+            alert(`Event Created:\n\nTitle: ${data.title}\nAddress: ${data.location}\nDate: ${data.date}\nMax Participants: ${data.maxParticipants}\nCost: ${data.cost}\nDetails: ${data.details || "N/A"}\nOrganizer: ${organizer}`);            router.back();
         } catch (error) {
             console.error("Error creating event:", error);
             alert("Error creating event. Please try again.");
