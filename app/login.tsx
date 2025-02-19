@@ -16,7 +16,9 @@ export default function LoginPage() {
         }
 
         try {
+            await AsyncStorage.setItem('username', username); // Store username
             await AsyncStorage.setItem('userLoggedIn', 'true'); // Store login status
+            console.log('Stored username:', username); // Debug log
             setError(null);
             router.replace('/home'); // Navigate to home
         } catch (error) {
