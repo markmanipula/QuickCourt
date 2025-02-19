@@ -1,7 +1,8 @@
 import { View, Text, StyleSheet, Button } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from "@/firebaseConfig"; // Ensure the correct path
 
 export default function HomePage() {
     const router = useRouter();
@@ -9,20 +10,19 @@ export default function HomePage() {
 
     // Check if user is logged in
     useEffect(() => {
-        const checkAuth = async () => {
-            const storedUser = await AsyncStorage.getItem("username");
-            if (!storedUser) {
-                router.replace("/login"); // Redirect to login if not logged in
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setUsername(user.displayName || "User"); // Use display name if available
             } else {
-                setUsername(storedUser);
+                router.replace("/login"); // Redirect to login if not logged in
             }
-        };
-        checkAuth();
+        });
+
+        return () => unsubscribe(); // Cleanup subscription
     }, []);
 
     const handleLogout = async () => {
-        await AsyncStorage.removeItem("username"); // Clear stored user
-        await AsyncStorage.removeItem("token"); // Clear stored token
+        await signOut(auth);
         router.replace("/login"); // Redirect to login page
     };
 

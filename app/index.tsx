@@ -1,22 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { auth } from "@/firebaseConfig"; // Ensure the correct path
+import { onAuthStateChanged } from "firebase/auth";
 
 export default function IndexPage() {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null); // Track login state
     const router = useRouter();
 
     useEffect(() => {
-        const checkLoginStatus = async () => {
-            try {
-                const userLoggedIn = await AsyncStorage.getItem("userLoggedIn");
-                setIsLoggedIn(userLoggedIn === "true");
-            } catch (error) {
-                console.error("Failed to fetch login status", error);
-            }
+        const checkLoginStatus = () => {
+            const unsubscribe = onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    setIsLoggedIn(true); // User is logged in
+                } else {
+                    setIsLoggedIn(false); // No user, so not logged in
+                }
+            });
+
+            return unsubscribe; // Cleanup the listener when component unmounts
         };
 
-        checkLoginStatus();
+        const unsubscribe = checkLoginStatus();
+
+        return () => unsubscribe(); // Cleanup the listener
     }, []);
 
     if (isLoggedIn === null) {

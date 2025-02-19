@@ -1,24 +1,24 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet } from "react-native";
+import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { auth } from "@/firebaseConfig"; // Ensure the correct path
 
 export default function SignupScreen() {
-    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [username, setUsername] = useState("");
 
     const handleSignup = async () => {
         try {
-            const response = await fetch("http://10.0.0.9:5001/signup", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password }),
-            });
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
 
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.error);
+            // Set the display name (username)
+            await updateProfile(user, { displayName: username });
 
-            alert("Signup successful! Please log in.");
-        } catch (error) {
-            alert(error.message);
+            Alert.alert("Success", "Signup successful! Please log in.");
+        } catch (error: any) {
+            Alert.alert("Signup Failed", error.message);
         }
     };
 
@@ -26,6 +26,7 @@ export default function SignupScreen() {
         <View style={styles.container}>
             <Text style={styles.heading}>Sign Up</Text>
             <TextInput placeholder="Username" value={username} onChangeText={setUsername} style={styles.input} />
+            <TextInput placeholder="Email" value={email} onChangeText={setEmail} style={styles.input} keyboardType="email-address" />
             <TextInput placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry style={styles.input} />
             <Button title="Sign Up" onPress={handleSignup} />
         </View>

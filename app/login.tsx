@@ -1,49 +1,47 @@
-import { View, Text, TextInput, StyleSheet, Button } from "react-native";
+import { View, Text, TextInput, StyleSheet, Button, Alert } from "react-native";
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/firebaseConfig"; // Ensure the correct path
 
 export default function AuthPage() {
     const router = useRouter();
-    const [username, setUsername] = useState<string>("");
+    const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [isSignUp, setIsSignUp] = useState<boolean>(false); // Toggle between login & signup
     const [error, setError] = useState<string | null>(null);
 
     const handleAuth = async () => {
-        if (!username || !password) {
+        if (!email || !password) {
             setError("Please fill in both fields");
             return;
         }
 
         try {
             if (isSignUp) {
-                // Sign Up: Store user credentials
-                await AsyncStorage.setItem(`user_${username}`, password);
-                setError("Account created! Please log in.");
+                // Sign Up: Create a new user
+                await createUserWithEmailAndPassword(auth, email, password);
+                Alert.alert("Success", "Account created! Please log in.");
                 setIsSignUp(false); // Switch to login mode
             } else {
-                // Login: Validate credentials
-                const storedPassword = await AsyncStorage.getItem(`user_${username}`);
-                if (storedPassword === password) {
-                    await AsyncStorage.setItem("username", username);
-                    await AsyncStorage.setItem("userLoggedIn", "true");
-                    setError(null);
-                    router.replace("/home"); // Navigate to home
-                } else {
-                    setError("Invalid username or password");
-                }
+                // Login: Authenticate user
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // Optional: Store user information if needed
+                // AsyncStorage.setItem("username", user.displayName || user.email);
+
+                router.replace("/home"); // Navigate to home page
             }
-        } catch (error) {
-            setError("Error processing request");
-            console.error(error);
+        } catch (error: any) {
+            setError(error.message);
         }
     };
 
     return (
         <View style={styles.container}>
             <Text style={styles.header}>{isSignUp ? "Sign Up" : "Login"}</Text>
-            <TextInput style={styles.input} placeholder="Username" value={username} onChangeText={setUsername} />
+            <TextInput style={styles.input} placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" />
             <TextInput style={styles.input} placeholder="Password" secureTextEntry value={password} onChangeText={setPassword} />
             {error && <Text style={styles.errorText}>{error}</Text>}
             <Button title={isSignUp ? "Sign Up" : "Login"} onPress={handleAuth} />
