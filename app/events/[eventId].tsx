@@ -65,11 +65,10 @@ export default function EventDetailsPage() {
             <Text style={styles.details}>Location: {event.location}</Text>
             <Text style={styles.details}>Date: {new Date(event.date).toLocaleDateString()}</Text>
             <Text style={styles.details}>Time: {new Date(event.time).toLocaleTimeString()}</Text>  {/* Assuming the event has a time field */}
-            <Text style={styles.details}>Description: {event.description}</Text>
+            <Text style={styles.details}>Description: {event.details}</Text>
             <Text style={styles.details}>Organizer: {event.organizer}</Text>  {/* If you have an organizer */}
             <Text style={styles.details}>Max Participants: {event.maxParticipants}</Text> {/* If you have a maxParticipants field */}
             <Text style={styles.details}>Cost: {event.cost}</Text> {/* If you have a cost field */}
-            <Text style={styles.details}>RSVP: {event.rsvp ? 'Yes' : 'No'}</Text> {/* If RSVP functionality exists */}
 
             {/* Add other event details here, e.g., images, videos, etc. */}
 
