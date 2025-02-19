@@ -20,6 +20,7 @@ expo-env.d.ts
 *.mobileprovision
 
 ios/
+firebaseConfig.ts
 
 # Metro
 .metro-health-check*
