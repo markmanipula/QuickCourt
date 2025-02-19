@@ -16,12 +16,12 @@ export default function CreateEventScreen() {
     useEffect(() => {
         const fetchUser = async () => {
             const storedUser = await AsyncStorage.getItem("username");
-            if (storedUser) {
+            if (storedUser && storedUser !== organizer) {
                 setOrganizer(storedUser);
             }
         };
-        fetchUser();
-    }, []);
+        fetchUser().then(r => {});
+    }, [organizer]);
 
     // Helper function to format date input as MM/DD/YYYY
     const formatDateInput = (text: string) => {
