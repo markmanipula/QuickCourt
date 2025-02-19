@@ -12,7 +12,11 @@ export default function HomePage() {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
-                setUsername(user.displayName || "User"); // Use display name if available
+                const fullName = user.displayName || "User";
+                const nameParts = fullName.split(" "); // Split name by space
+                const firstName = nameParts[0];
+                const lastNameInitial = nameParts[1] ? nameParts[1][0] : ""; // First letter of last name
+                setUsername(`${firstName} ${lastNameInitial}.`); // Format as "First LastInitial."
             } else {
                 router.replace("/login"); // Redirect to login if not logged in
             }
@@ -28,7 +32,7 @@ export default function HomePage() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>Welcome to QuickCourt, {username}!</Text>
+            <Text style={styles.header}>Welcome to QuickCourt, {username}</Text>
             <View style={styles.buttonContainer}>
                 <Button title="Create Event" onPress={() => router.push("/create-event")} />
                 <Button title="View All Events" onPress={() => router.push("/events")} />

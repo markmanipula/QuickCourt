@@ -1,35 +1,40 @@
 import { View, Text, TextInput, StyleSheet, Button, Alert } from "react-native";
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "@/firebaseConfig"; // Ensure the correct path
 
 export default function AuthPage() {
     const router = useRouter();
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
+    const [firstName, setFirstName] = useState<string>("");
+    const [lastName, setLastName] = useState<string>("");
     const [isSignUp, setIsSignUp] = useState<boolean>(false); // Toggle between login & signup
     const [error, setError] = useState<string | null>(null);
 
     const handleAuth = async () => {
-        if (!email || !password) {
-            setError("Please fill in both fields");
+        if (!email || !password || (isSignUp && (!firstName || !lastName))) {
+            setError("Please fill in all required fields");
             return;
         }
 
         try {
             if (isSignUp) {
                 // Sign Up: Create a new user
-                await createUserWithEmailAndPassword(auth, email, password);
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // Update profile with first and last name
+                await updateProfile(user, {
+                    displayName: `${firstName} ${lastName}`,
+                });
+
                 Alert.alert("Success", "Account created! Please log in.");
                 setIsSignUp(false); // Switch to login mode
             } else {
                 // Login: Authenticate user
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-
-                // Optional: Store user information if needed
-                // AsyncStorage.setItem("username", user.displayName || user.email);
+                await signInWithEmailAndPassword(auth, email, password);
 
                 router.replace("/home"); // Navigate to home page
             }
@@ -41,8 +46,38 @@ export default function AuthPage() {
     return (
         <View style={styles.container}>
             <Text style={styles.header}>{isSignUp ? "Sign Up" : "Login"}</Text>
-            <TextInput style={styles.input} placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" />
-            <TextInput style={styles.input} placeholder="Password" secureTextEntry value={password} onChangeText={setPassword} />
+
+            {isSignUp && (
+                <>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="First Name"
+                        value={firstName}
+                        onChangeText={setFirstName}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Last Name"
+                        value={lastName}
+                        onChangeText={setLastName}
+                    />
+                </>
+            )}
+
+            <TextInput
+                style={styles.input}
+                placeholder="Email"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Password"
+                secureTextEntry
+                value={password}
+                onChangeText={setPassword}
+            />
             {error && <Text style={styles.errorText}>{error}</Text>}
             <Button title={isSignUp ? "Sign Up" : "Login"} onPress={handleAuth} />
             <Text style={styles.toggleText} onPress={() => setIsSignUp(!isSignUp)}>
