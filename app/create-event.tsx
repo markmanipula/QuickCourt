@@ -5,13 +5,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function CreateEventScreen() {
     const router = useRouter();
-    const [title, setTitle] = useState(""); // Change to title
+    const [title, setTitle] = useState(""); // Event title
     const [location, setLocation] = useState("");
     const [date, setDate] = useState("");
+    const [time, setTime] = useState(""); // State for event time
     const [cost, setCost] = useState("");
-    const [maxParticipants, setMaxParticipants] = useState(""); // Change to maxParticipants
+    const [maxParticipants, setMaxParticipants] = useState(""); // Max participants
     const [details, setDetails] = useState("");
-    const [organizer, setOrganizer] = useState<any>(null); // State to hold user info
+    const [organizer, setOrganizer] = useState<any>(null); // User info
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -20,7 +21,7 @@ export default function CreateEventScreen() {
                 setOrganizer(storedUser);
             }
         };
-        fetchUser().then(r => {});
+        fetchUser();
     }, [organizer]);
 
     // Helper function to format date input as MM/DD/YYYY
@@ -47,19 +48,42 @@ export default function CreateEventScreen() {
         setDate(formattedDate);
     };
 
+    // Helper function to format time input as HH:MM
+    const formatTimeInput = (text: string) => {
+        let cleaned = text.replace(/\D/g, "");
+        if (cleaned.length === 0) {
+            setTime("");
+            return;
+        }
+
+        if (cleaned.length > 4) {
+            cleaned = cleaned.slice(0, 4);
+        }
+
+        let formattedTime = "";
+        if (cleaned.length <= 2) {
+            formattedTime = cleaned;
+        } else {
+            formattedTime = `${cleaned.slice(0, 2)}:${cleaned.slice(2)}`;
+        }
+
+        setTime(formattedTime);
+    };
+
     const handleSubmit = async () => {
-        if (!title || !location || !date || !maxParticipants || !cost || !organizer) {
+        if (!title || !location || !date || !time || !maxParticipants || !cost || !organizer) {
             alert("Please fill out all required fields.");
             return;
         }
 
         const eventData = {
-            title, // Change to title
+            title,
             location,
             date,
+            time, // Include time in the event data
             maxParticipants,
             cost,
-            details: details || "N/A", // Optional details field
+            details: details || "N/A",
             organizer
         };
 
@@ -83,7 +107,8 @@ export default function CreateEventScreen() {
             const data = await response.json();
             console.log("Event created successfully:", data);
 
-            alert(`Event Created:\n\nTitle: ${data.title}\nAddress: ${data.location}\nDate: ${data.date}\nMax Participants: ${data.maxParticipants}\nCost: ${data.cost}\nDetails: ${data.details || "N/A"}\nOrganizer: ${organizer}`);            router.back();
+            alert(`Event Created:\n\nTitle: ${data.title}\nAddress: ${data.location}\nDate: ${data.date}\nTime: ${data.time}\nMax Participants: ${data.maxParticipants}\nCost: ${data.cost}\nDetails: ${data.details || "N/A"}\nOrganizer: ${organizer}`);
+            router.back();
         } catch (error) {
             console.error("Error creating event:", error);
             alert("Error creating event. Please try again.");
@@ -96,11 +121,11 @@ export default function CreateEventScreen() {
 
             <Text style={styles.heading}>Create a New Event</Text>
 
-            <Text style={styles.label}>Event Title</Text> {/* Change to Event Title */}
+            <Text style={styles.label}>Event Title</Text>
             <TextInput
                 placeholder="Enter event title"
-                value={title} // Change to title
-                onChangeText={setTitle} // Change to setTitle
+                value={title}
+                onChangeText={setTitle}
                 style={styles.input}
             />
 
@@ -122,16 +147,26 @@ export default function CreateEventScreen() {
                 maxLength={10}
             />
 
-            <Text style={styles.label}>Max Participants</Text> {/* Change to Max Participants */}
+            <Text style={styles.label}>Time</Text>
+            <TextInput
+                placeholder="HH:MM"
+                value={time}
+                onChangeText={formatTimeInput}
+                keyboardType="numeric"
+                style={styles.input}
+                maxLength={5}
+            />
+
+            <Text style={styles.label}>Max Participants</Text>
             <TextInput
                 placeholder="Enter max participants"
-                value={maxParticipants} // Change to maxParticipants
-                onChangeText={setMaxParticipants} // Change to setMaxParticipants
+                value={maxParticipants}
+                onChangeText={setMaxParticipants}
                 keyboardType="numeric"
                 style={styles.input}
             />
 
-            <Text style={styles.label}>Cost ($)</Text> {/* New Cost Input */}
+            <Text style={styles.label}>Cost ($)</Text>
             <TextInput
                 placeholder="Enter cost"
                 value={cost}
