@@ -7,22 +7,16 @@ export default function HomePage() {
     const router = useRouter();
 
     const handleLogout = async () => {
-        // Clear login status
-        await AsyncStorage.removeItem('userLoggedIn');
-        router.push('/login'); // Navigate back to login page
+        await AsyncStorage.removeItem("userLoggedIn"); // Remove login data
+        router.replace("/login"); // Redirect to login page
     };
 
     return (
         <View>
-            <Text>Hello, QuickCourt!</Text>
-            <Button
-                title="Create Event"
-                onPress={() => router.push("/create-event")}
-            />
-            <Button
-                title="View All Events"
-                onPress={() => router.push("/events")}
-            />
+            <Text>Welcome to QuickCourt!</Text>
+            <Button title="Create Event" onPress={() => router.push("/create-event")} />
+            <Button title="View All Events" onPress={() => router.push("/events")} />
+            <Button title="Logout" onPress={handleLogout} color="red" />
         </View>
     );
 }
