@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Button, StyleSheet } from "react-native";
+import { View, Text, TextInput, Button, StyleSheet, ScrollView } from "react-native";
 import { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -127,7 +127,7 @@ export default function CreateEventScreen() {
     };
 
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             <Button title="Go Back" onPress={() => router.back()} />
 
             <Text style={styles.heading}>Create a New Event</Text>
@@ -197,7 +197,7 @@ export default function CreateEventScreen() {
             />
 
             <Button title="Create Event" onPress={handleSubmit} />
-        </View>
+        </ScrollView>
     );
 }
 

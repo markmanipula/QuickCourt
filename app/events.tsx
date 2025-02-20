@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 
@@ -53,7 +53,7 @@ export default function EventsPage() {
 
     // Render events list
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             <Text style={styles.header}>All Events</Text>
             {events.length > 0 ? (
                 events.map((event) => (
@@ -75,7 +75,7 @@ export default function EventsPage() {
             <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                 <Text style={styles.backButtonText}>Back</Text>
             </TouchableOpacity>
-        </View>
+        </ScrollView>
     );
 }
 
