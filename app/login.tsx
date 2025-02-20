@@ -43,6 +43,10 @@ export default function AuthPage() {
         }
     };
 
+    const toggleSignUpLogin = () => {
+        setIsSignUp(prevState => !prevState); // Use previous state to toggle without triggering re-render issues
+    };
+
     return (
         <View style={styles.container}>
             <Text style={styles.header}>{isSignUp ? "Sign Up" : "Login"}</Text>
@@ -80,7 +84,7 @@ export default function AuthPage() {
             />
             {error && <Text style={styles.errorText}>{error}</Text>}
             <Button title={isSignUp ? "Sign Up" : "Login"} onPress={handleAuth} />
-            <Text style={styles.toggleText} onPress={() => setIsSignUp(!isSignUp)}>
+            <Text style={styles.toggleText} onPress={toggleSignUpLogin}>
                 {isSignUp ? "Already have an account? Log in" : "Don't have an account? Sign up"}
             </Text>
         </View>

@@ -25,17 +25,19 @@ export default function IndexPage() {
         return () => unsubscribe(); // Cleanup the listener
     }, []);
 
-    if (isLoggedIn === null) {
-        // Optionally, show a loading spinner or something else here while checking login status
-        return null;
-    }
+    useEffect(() => {
+        // Delay the navigation after state is set, to avoid triggering during render
+        if (isLoggedIn === null) {
+            return; // If the login status is still unknown, don't navigate yet
+        }
 
-    // If the user is logged in, redirect them to the home page
-    if (isLoggedIn) {
-        router.push("/home"); // Navigate to home page
-    } else {
-        router.push("/login"); // Navigate to login page
-    }
+        if (isLoggedIn) {
+            router.push("/home"); // Navigate to home page
+        } else {
+            router.push("/login"); // Navigate to login page
+        }
+    }, [isLoggedIn, router]);
 
+    // Optionally, you can return a loading screen here while the login state is being checked
     return null; // Rendering nothing as we're redirecting based on login status
 }
