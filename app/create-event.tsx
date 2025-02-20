@@ -1,7 +1,8 @@
 import { View, Text, TextInput, Button, StyleSheet } from "react-native";
 import { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/firebaseConfig"; // Ensure the correct path
 
 export default function CreateEventScreen() {
     const router = useRouter();
@@ -15,14 +16,21 @@ export default function CreateEventScreen() {
     const [organizer, setOrganizer] = useState<any>(null); // User info
 
     useEffect(() => {
-        const fetchUser = async () => {
-            const storedUser = await AsyncStorage.getItem("username");
-            if (storedUser && storedUser !== organizer) {
-                setOrganizer(storedUser);
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const fullName = user.displayName || "User";
+                const nameParts = fullName.split(" ");
+                const firstName = nameParts[0];
+                const lastName = nameParts.length > 1 ? nameParts.slice(1).join(" ") : ""; // Last name can be multiple words
+                setOrganizer({ firstName, lastName });
+                console.log("Fetched organizer:", { firstName, lastName }); // Debugging output
+            } else {
+                router.replace("/login"); // Redirect to login if not logged in
             }
-        };
-        fetchUser();
-    }, [organizer]);
+        });
+
+        return () => unsubscribe(); // Cleanup subscription
+    }, []); // Run only once on mount
 
     // Helper function to format date input as MM/DD/YYYY
     const formatDateInput = (text: string) => {
@@ -76,6 +84,9 @@ export default function CreateEventScreen() {
             return;
         }
 
+        // Concatenate first and last name into a single string
+        const organizerName = `${organizer.firstName} ${organizer.lastName}`;
+
         const eventData = {
             title,
             location,
@@ -84,7 +95,7 @@ export default function CreateEventScreen() {
             maxParticipants,
             cost,
             details: details || "N/A",
-            organizer
+            organizer: organizerName, // Send organizer as a string
         };
 
         try {
@@ -107,7 +118,7 @@ export default function CreateEventScreen() {
             const data = await response.json();
             console.log("Event created successfully:", data);
 
-            alert(`Event Created:\n\nTitle: ${data.title}\nAddress: ${data.location}\nDate: ${data.date}\nTime: ${data.time}\nMax Participants: ${data.maxParticipants}\nCost: ${data.cost}\nDetails: ${data.details || "N/A"}\nOrganizer: ${organizer}`);
+            alert(`Event Created:\n\nTitle: ${data.title}\nAddress: ${data.location}\nDate: ${data.date}\nTime: ${data.time}\nMax Participants: ${data.maxParticipants}\nCost: ${data.cost}\nDetails: ${data.details || "N/A"}\nOrganizer: ${organizerName}`);
             router.back();
         } catch (error) {
             console.error("Error creating event:", error);
