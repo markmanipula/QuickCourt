@@ -64,7 +64,7 @@ export default function EventDetailsPage() {
             <Text style={styles.header}>{event.title}</Text>
             <Text style={styles.details}>Location: {event.location}</Text>
             <Text style={styles.details}>Date: {new Date(event.date).toLocaleDateString()}</Text>
-            {event.time && <Text style={styles.details}>Time: {new Date(event.time).toLocaleTimeString()}</Text>}
+            {event.time && <Text style={styles.details}>Time: {event.time}</Text>}
             {event.details && <Text style={styles.details}>Description: {event.details}</Text>}
             {event.organizer && <Text style={styles.details}>Organizer: {event.organizer}</Text>}
             {event.maxParticipants && <Text style={styles.details}>Max Participants: {event.maxParticipants}</Text>}
