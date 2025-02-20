@@ -68,6 +68,7 @@ export default function EventDetailsPage() {
             {event.details && <Text style={styles.details}>Description: {event.details}</Text>}
             {event.organizer && <Text style={styles.details}>Organizer: {event.organizer}</Text>}
             {event.maxParticipants && <Text style={styles.details}>Max Participants: {event.maxParticipants}</Text>}
+            {event.participants && <Text style={styles.details}>Participants: {event.participants}</Text>}
             {event.cost && <Text style={styles.details}>Cost: {event.cost}</Text>}
 
             {/* Add other event details here, e.g., images, videos, etc. */}
