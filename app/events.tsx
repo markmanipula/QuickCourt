@@ -33,6 +33,7 @@ export default function EventsPage() {
         router.push(`/events/${eventId}`);  // Pass eventId as part of the URL
     };
 
+    // Render loading state
     if (loading) {
         return (
             <View style={styles.container}>
@@ -41,6 +42,7 @@ export default function EventsPage() {
         );
     }
 
+    // Render error state
     if (error) {
         return (
             <View style={styles.container}>
@@ -49,20 +51,26 @@ export default function EventsPage() {
         );
     }
 
+    // Render events list
     return (
         <View style={styles.container}>
             <Text style={styles.header}>All Events</Text>
-            {events.map((event) => (
-                <TouchableOpacity
-                    key={event._id}  // Use event._id for the key
-                    style={styles.eventItem}
-                    onPress={() => handleEventClick(event._id)}  // Pass event._id to event details screen
-                >
-                    <Text>{event.title}</Text>
-                    <Text>{event.location}</Text>
-                    <Text>{new Date(event.date).toLocaleDateString()}</Text>  {/* Format the date */}
-                </TouchableOpacity>
-            ))}
+            {events.length > 0 ? (
+                events.map((event) => (
+                    <TouchableOpacity
+                        key={event._id}  // Use event._id for the key
+                        style={styles.eventItem}
+                        onPress={() => handleEventClick(event._id)}  // Pass event._id to event details screen
+                    >
+                        {/* Ensure each piece of data is valid before rendering */}
+                        <Text>{event.title ? event.title : "No Title"}</Text>
+                        <Text>{event.location ? event.location : "No Location"}</Text>
+                        <Text>{event.date ? new Date(event.date).toLocaleDateString() : "No Date"}</Text>
+                    </TouchableOpacity>
+                ))
+            ) : (
+                <Text style={styles.noEventsText}>No events available.</Text>  // Display a message if no events
+            )}
 
             <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                 <Text style={styles.backButtonText}>Back</Text>
@@ -100,5 +108,10 @@ const styles = StyleSheet.create({
         color: 'red',
         fontSize: 18,
         textAlign: 'center',
+    },
+    noEventsText: {
+        fontSize: 18,
+        textAlign: 'center',
+        color: '#666',
     },
 });
