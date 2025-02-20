@@ -191,9 +191,7 @@ export default function CreateEventScreen() {
                 placeholder="Enter additional details"
                 value={details}
                 onChangeText={setDetails}
-                multiline
-                numberOfLines={4}
-                style={[styles.input, { height: 80 }]}
+                style={styles.input}
             />
 
             <Button title="Create Event" onPress={handleSubmit} />
