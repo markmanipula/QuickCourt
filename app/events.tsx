@@ -64,8 +64,9 @@ export default function EventsPage() {
                     >
                         {/* Ensure each piece of data is valid before rendering */}
                         <Text>{event.title ? event.title : "No Title"}</Text>
-                        <Text>{event.location ? event.location : "No Location"}</Text>
-                        <Text>{event.date ? new Date(event.date).toLocaleDateString() : "No Date"}</Text>
+                        <Text>{event.location ? `Address: ${event.location}` : "No Location"}</Text>
+                        <Text>{event.organizer ? `Organizer: ${event.organizer}` : "No Organizer"}</Text>
+                        <Text>{event.date ? `Date: ${new Date(event.date).toLocaleDateString()}` : "No Date"}</Text>
                     </TouchableOpacity>
                 ))
             ) : (
