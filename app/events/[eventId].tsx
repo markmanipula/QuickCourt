@@ -105,6 +105,8 @@ export default function EventDetailsPage() {
             const updatedEvent = responseData.event; // Assuming the updated event data is returned
             console.log("Updated event data after joining:", updatedEvent);
             setEvent(updatedEvent);
+            alert(`Successfully joined event!`);
+            router.back();
 
         } catch (err: any) {
             console.log(err);
