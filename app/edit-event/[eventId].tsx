@@ -1,8 +1,6 @@
-// Screen for editing an event
-
 import { View, Text, TextInput, Button, StyleSheet, ScrollView } from "react-native";
 import { useState, useEffect } from "react";
-import {useLocalSearchParams, useRouter} from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/firebaseConfig"; // Ensure the correct path
 import { styles } from "@/syles/styles";
@@ -41,10 +39,10 @@ export default function EditEventScreen() {
                 if (data) {
                     setTitle(data.title);
                     setLocation(data.location);
-                    setDate(data.date);
+                    setDate(new Date(data.date).toLocaleDateString("en-US")); // Ensure MM/DD/YYYY format
                     setTime(data.time);
-                    setCost(data.cost);
-                    setMaxParticipants(data.maxParticipants);
+                    setCost(data.cost.toString());
+                    setMaxParticipants(data.maxParticipants.toString());
                     setDetails(data.details || "");
                     console.log("Fetched event data:", data);
                 }
