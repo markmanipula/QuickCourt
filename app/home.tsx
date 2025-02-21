@@ -34,7 +34,7 @@ export default function HomePage() {
         <View style={styles.container}>
             <Text style={styles.header}>Welcome to QuickCourt, {username}</Text>
             <View style={styles.buttonContainer}>
-                <Button title="Create Event" onPress={() => router.push("/create-event")} />
+                <Button title="Create Event" onPress={() => router.push("/events/create-event")} />
                 <Button title="View All Events" onPress={() => router.push("/events")} />
                 <Button title="Logout" onPress={handleLogout} color="red" />
             </View>
