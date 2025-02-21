@@ -1,11 +1,9 @@
-// Dynamic route for viewing a single event
-
 import { View, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/firebaseConfig"; // Ensure the correct path
-import {styles} from "@/syles/styles";
+import { styles } from "@/syles/styles";
 
 export default function EventDetailsPage() {
     const { eventId } = useLocalSearchParams();
@@ -17,7 +15,7 @@ export default function EventDetailsPage() {
     const router = useRouter();
     const [participant, setParticipant] = useState<any>(null);
     const [isParticipant, setIsParticipant] = useState(false);
-    const [isOrganizer, setIsOrganizer] = useState(false); // NEW: Track if user is the organizer
+    const [isOrganizer, setIsOrganizer] = useState(false);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -55,7 +53,6 @@ export default function EventDetailsPage() {
                     setIsParticipant(data.participants.includes(participantName));
                 }
 
-                // NEW: Check if the current user is the event organizer
                 if (participant) {
                     const participantName = `${participant.firstName} ${participant.lastName}`;
                     setIsOrganizer(data.organizer === participantName);
@@ -134,7 +131,7 @@ export default function EventDetailsPage() {
     };
 
     const handleEditEvent = () => {
-        router.push(`/edit-event/${eventId}`);  // Navigate to the correct edit event route
+        router.push(`/edit-event/${eventId}`);
     };
 
     if (loading) {
@@ -155,15 +152,15 @@ export default function EventDetailsPage() {
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            <Text style={styles.header}>{event.title}</Text>
-            <Text style={styles.details}>Location: {event.location}</Text>
-            <Text style={styles.details}>Date: {new Date(event.date).toLocaleDateString()}</Text>
-            {event.time && <Text style={styles.details}>Time: {event.time}</Text>}
-            {event.details && <Text style={styles.details}>Description: {event.details}</Text>}
-            {event.organizer && <Text style={styles.details}>Organizer: {event.organizer}</Text>}
-            {event.maxParticipants && <Text style={styles.details}>Max Participants: {event.maxParticipants}</Text>}
-            {event.participants && <Text style={styles.details}>Participants: {event.participants.length}</Text>}
-            {event.cost && <Text style={styles.details}>Cost: {event.cost}</Text>}
+            <Text style={styles.header}>{event.title ?? "No Title"}</Text>
+            <Text style={styles.details}>Location: {event.location ?? "Unknown"}</Text>
+            <Text style={styles.details}>Date: {event.date ? new Date(event.date).toLocaleDateString() : "TBA"}</Text>
+            <Text style={styles.details}>Time: {event.time ?? "TBA"}</Text>
+            <Text style={styles.details}>Description: {event.details ?? "No details available"}</Text>
+            <Text style={styles.details}>Organizer: {event.organizer ?? "Unknown"}</Text>
+            <Text style={styles.details}>Max Participants: {event.maxParticipants ?? "N/A"}</Text>
+            <Text style={styles.details}>Participants: {event.participants?.length ?? 0}</Text>
+            <Text style={styles.details}>Cost: {event.cost ?? "Free"}</Text>
 
             {!isParticipant ? (
                 <TouchableOpacity
@@ -187,7 +184,6 @@ export default function EventDetailsPage() {
                 </TouchableOpacity>
             )}
 
-            {/* NEW: Show "Edit Event" button if the user is the organizer */}
             {isOrganizer && (
                 <TouchableOpacity
                     style={styles.editButton}
