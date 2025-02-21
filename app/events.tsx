@@ -1,3 +1,5 @@
+//Screen to list all events
+
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";

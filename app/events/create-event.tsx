@@ -1,3 +1,5 @@
+// Screen for creating an event
+
 import { View, Text, TextInput, Button, StyleSheet, ScrollView } from "react-native";
 import { useState, useEffect } from "react";
 import { useRouter } from "expo-router";

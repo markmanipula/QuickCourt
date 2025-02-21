@@ -91,4 +91,18 @@ export const styles = StyleSheet.create({
         width: "80%",
         gap: 10, // Spacing between buttons
     },
+    editButton: {
+        backgroundColor: '#4CAF50', // Green background for the edit button
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+        marginTop: 15,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    editButtonText: {
+        color: '#fff', // White text
+        fontSize: 16,
+        fontWeight: 'bold',
+    }
 });
