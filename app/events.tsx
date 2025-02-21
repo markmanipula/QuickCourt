@@ -1,4 +1,4 @@
-//Screen to list all events
+//Screen to list all view-event
 
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
@@ -7,33 +7,33 @@ import {styles} from "@/syles/styles";
 
 export default function EventsPage() {
     const router = useRouter();
-    const [events, setEvents] = useState<any[]>([]);  // State to store events
+    const [events, setEvents] = useState<any[]>([]);  // State to store view-event
     const [loading, setLoading] = useState(true);  // Loading state
     const [error, setError] = useState<string | null>(null);  // Error state
 
     useEffect(() => {
-        // Fetch events from the backend
+        // Fetch view-event from the backend
         const fetchEvents = async () => {
             try {
                 const response = await fetch('http://10.0.0.9:5001/events');
                 if (!response.ok) {
-                    throw new Error('Failed to fetch events');
+                    throw new Error('Failed to fetch view-event');
                 }
                 const data = await response.json();
-                setEvents(data);  // Set events data to state
+                setEvents(data);  // Set view-event data to state
             } catch (err) {
-                setError('Failed to fetch events');
+                setError('Failed to fetch view-event');
                 console.error(err);
             } finally {
                 setLoading(false);  // Set loading state to false
             }
         };
 
-        fetchEvents();  // Fetch events on component mount
+        fetchEvents();  // Fetch view-event on component mount
     }, []);
 
     const handleEventClick = (eventId: string) => {
-        router.push(`/events/${eventId}`);  // Pass eventId as part of the URL
+        router.push(`/view-event/${eventId}`);  // Pass eventId as part of the URL
     };
 
     // Render loading state
@@ -54,7 +54,7 @@ export default function EventsPage() {
         );
     }
 
-    // Render events list
+    // Render view-event list
     return (
         <ScrollView style={styles.container}>
             <Text style={styles.header}>All Events</Text>
@@ -73,7 +73,7 @@ export default function EventsPage() {
                     </TouchableOpacity>
                 ))
             ) : (
-                <Text style={styles.noEventsText}>No events available.</Text>  // Display a message if no events
+                <Text style={styles.noEventsText}>No events available.</Text>  // Display a message if no view-event
             )}
 
             <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
