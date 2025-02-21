@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
+import {styles} from "@/syles/styles";
 
 export default function EventsPage() {
     const router = useRouter();
@@ -79,40 +80,3 @@ export default function EventsPage() {
         </ScrollView>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        padding: 20,
-    },
-    header: {
-        fontSize: 24,
-        fontWeight: 'bold',
-    },
-    eventItem: {
-        marginVertical: 10,
-        padding: 10,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 5,
-    },
-    backButton: {
-        marginTop: 20,
-        padding: 10,
-        backgroundColor: "#ccc",
-        borderRadius: 5,
-        alignItems: "center",
-    },
-    backButtonText: {
-        color: "#000",
-    },
-    errorText: {
-        color: 'red',
-        fontSize: 18,
-        textAlign: 'center',
-    },
-    noEventsText: {
-        fontSize: 18,
-        textAlign: 'center',
-        color: '#666',
-    },
-});
