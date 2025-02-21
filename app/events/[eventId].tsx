@@ -88,7 +88,6 @@ export default function EventDetailsPage() {
             setEvent(responseData.event);
             setIsParticipant(true);
             alert(`Successfully joined event!`);
-            router.back();
         } catch (err: any) {
             alert(`Failed to join event: ${err.message}`);
         } finally {
@@ -117,7 +116,6 @@ export default function EventDetailsPage() {
             setEvent(responseData.event);
             setIsParticipant(false);
             alert(`Successfully left event!`);
-            router.back();
         } catch (err: any) {
             alert(`Failed to leave event: ${err.message}`);
         } finally {
@@ -174,47 +172,61 @@ export default function EventDetailsPage() {
                     </Text>
                 </TouchableOpacity>
             )}
+            <Text onPress={() => router.back()} style={styles.backButtonText}>Back</Text>
         </ScrollView>
     );
 }
 
+
 const styles = StyleSheet.create({
     container: {
-        flexGrow: 1,
         padding: 20,
-        backgroundColor: "#fff",
     },
     header: {
         fontSize: 24,
-        fontWeight: "bold",
+        fontWeight: 'bold',
         marginBottom: 10,
     },
     details: {
         fontSize: 16,
-        marginBottom: 5,
+        marginBottom: 10,
+    },
+    backButtonText: {
+        marginTop: 20,
+        color: "#000",
+        fontSize: 16,
+        textAlign: 'center',
+    },
+    errorText: {
+        color: 'red',
+        fontSize: 18,
+        textAlign: 'center',
     },
     joinButton: {
-        backgroundColor: "blue",
-        padding: 10,
+        marginTop: 20,
+        backgroundColor: '#007BFF',
+        padding: 12,
         borderRadius: 5,
-        alignItems: "center",
-        marginTop: 10,
-    },
-    joinButtonText: {
-        color: "#fff",
-        fontSize: 16,
-        fontWeight: "bold",
+        alignItems: 'center',
     },
     leaveButton: {
-        backgroundColor: "red",
-        padding: 10,
+        marginTop: 20,
+        backgroundColor: '#FF3B30',
+        padding: 12,
         borderRadius: 5,
-        alignItems: "center",
-        marginTop: 10,
+        alignItems: 'center',
+    },
+    joinButtonText: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
     leaveButtonText: {
-        color: "#fff",
+        color: 'white',
         fontSize: 16,
-        fontWeight: "bold",
+        fontWeight: 'bold',
     },
+    disabledButton: {
+        opacity: 0.6,
+    }
 });
