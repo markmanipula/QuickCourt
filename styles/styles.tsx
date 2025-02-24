@@ -116,5 +116,13 @@ export const styles = StyleSheet.create({
         color: 'white',
         fontSize: 16,
         fontWeight: 'bold',
-    }
+    },
+    participantName: {
+        fontSize: 18,
+        marginVertical: 5,
+    },
+    noParticipants: {
+        fontSize: 16,
+        color: 'gray',
+    },
 });

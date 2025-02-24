@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { styles } from "@/styles/styles";
 
 export default function ParticipantsPage() {
     const { eventId } = useLocalSearchParams();
@@ -76,38 +77,3 @@ export default function ParticipantsPage() {
         </ScrollView>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        padding: 20,
-        alignItems: 'center',
-    },
-    header: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
-    },
-    participantName: {
-        fontSize: 18,
-        marginVertical: 5,
-    },
-    noParticipants: {
-        fontSize: 16,
-        color: 'gray',
-    },
-    errorText: {
-        color: 'red',
-        fontSize: 18,
-        textAlign: 'center',
-    },
-    backButton: {
-        marginTop: 20,
-        backgroundColor: '#007AFF',
-        padding: 10,
-        borderRadius: 8,
-    },
-    backButtonText: {
-        color: '#fff',
-        fontSize: 16,
-    },
-});

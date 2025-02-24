@@ -166,6 +166,22 @@ export default function EventDetailsPage() {
             <Text style={styles.details}>Participants: {event.participants?.length ?? 0}</Text>
             <Text style={styles.details}>Cost: {event.cost ?? "Free"}</Text>
 
+            <TouchableOpacity
+                style={styles.viewParticipantsButton}
+                onPress={handleViewParticipants}
+            >
+                <Text style={styles.viewParticipantsButtonText}>See Current Participants</Text>
+            </TouchableOpacity>
+
+            {isOrganizer && (
+                <TouchableOpacity
+                    style={styles.editButton}
+                    onPress={handleEditEvent}
+                >
+                    <Text style={styles.editButtonText}>Edit Event</Text>
+                </TouchableOpacity>
+            )}
+
             {!isParticipant ? (
                 <TouchableOpacity
                     style={styles.joinButton}
@@ -185,22 +201,6 @@ export default function EventDetailsPage() {
                     <Text style={styles.leaveButtonText}>
                         {leaving ? "Leaving..." : "Leave Event"}
                     </Text>
-                </TouchableOpacity>
-            )}
-
-            <TouchableOpacity
-                style={styles.viewParticipantsButton}
-                onPress={handleViewParticipants}
-            >
-                <Text style={styles.viewParticipantsButtonText}>See Current Participants</Text>
-            </TouchableOpacity>
-
-            {isOrganizer && (
-                <TouchableOpacity
-                    style={styles.editButton}
-                    onPress={handleEditEvent}
-                >
-                    <Text style={styles.editButtonText}>Edit Event</Text>
                 </TouchableOpacity>
             )}
 
