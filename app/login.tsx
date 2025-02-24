@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useRouter } from "expo-router";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "@/firebaseConfig"; // Ensure the correct path
+import { LinearGradient } from "expo-linear-gradient"; // Import LinearGradient
 
 export default function AuthPage() {
     const router = useRouter();
@@ -48,60 +49,74 @@ export default function AuthPage() {
     };
 
     return (
-        <View style={styles.container}>
-            <Image
-                source={require('@/assets/images/volleyball.png')} // Make sure to replace with your actual image file path
-                style={styles.image}
-            />
+        <LinearGradient colors={['#4c669f', '#3b5998', '#192f5d']} style={styles.gradientContainer}>
+            <View style={styles.container}>
+                <Image
+                    source={require('@/assets/images/volleyball.png')} // Make sure to replace with your actual image file path
+                    style={styles.image}
+                />
 
-            <Text style={styles.welcomeText}>Welcome to QuickCourt!</Text>
+                <Text style={styles.welcomeText}>Welcome to QuickCourt!</Text>
 
-            {isSignUp && (
-                <>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="First Name"
-                        value={firstName}
-                        onChangeText={setFirstName}
-                    />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Last Name"
-                        value={lastName}
-                        onChangeText={setLastName}
-                    />
-                </>
-            )}
+                {isSignUp && (
+                    <>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="First Name"
+                            value={firstName}
+                            onChangeText={setFirstName}
+                        />
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Last Name"
+                            value={lastName}
+                            onChangeText={setLastName}
+                        />
+                    </>
+                )}
 
-            <TextInput
-                style={styles.input}
-                placeholder="Email"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Password"
-                secureTextEntry
-                value={password}
-                onChangeText={setPassword}
-            />
-            {error && <Text style={styles.errorText}>{error}</Text>}
-            <Button title={isSignUp ? "Sign Up" : "Login"} onPress={handleAuth} />
-            <Text style={styles.toggleText} onPress={toggleSignUpLogin}>
-                {isSignUp ? "Already have an account? Log in" : "Don't have an account? Sign up"}
-            </Text>
-        </View>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Email"
+                    value={email}
+                    onChangeText={setEmail}
+                    keyboardType="email-address"
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Password"
+                    secureTextEntry
+                    value={password}
+                    onChangeText={setPassword}
+                />
+                {error && <Text style={styles.errorText}>{error}</Text>}
+                <Button title={isSignUp ? "Sign Up" : "Login"} onPress={handleAuth} />
+                <Text style={styles.toggleText} onPress={toggleSignUpLogin}>
+                    {isSignUp ? "Already have an account? Log in" : "Don't have an account? Sign up"}
+                </Text>
+            </View>
+        </LinearGradient>
     );
 }
 
 const styles = StyleSheet.create({
+    gradientContainer: { flex: 1 }, // Full screen container for gradient background
     container: { flex: 1, justifyContent: "center", alignItems: "center", padding: 20 },
-    welcomeText: { fontSize: 32, fontWeight: "bold", marginBottom: 20, textAlign: 'center' },
-    header: { fontSize: 24, fontWeight: "bold", marginBottom: 20 },
+    welcomeText: { fontSize: 32, fontWeight: "bold", marginBottom: 20, textAlign: 'center', color: 'white' },
     image: { width: 150, height: 150, marginBottom: 20 }, // Adjust the image size as needed
-    input: { width: "100%", padding: 10, marginBottom: 10, borderWidth: 1, borderColor: "#ccc", borderRadius: 5 },
+    input: {
+        width: "100%",
+        padding: 10,
+        marginBottom: 10,
+        borderWidth: 1,
+        borderColor: "#ccc",
+        borderRadius: 5,
+        backgroundColor: 'white'
+    },
     errorText: { color: "red", fontSize: 14, marginBottom: 10 },
-    toggleText: { color: "blue", marginTop: 10, textDecorationLine: "underline" },
+    toggleText: {
+        color: 'white',
+        marginTop: 10,
+        textDecorationLine: 'underline'
+    },
 });
