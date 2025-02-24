@@ -3,7 +3,7 @@
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import {styles} from "@/syles/styles";
+import {styles} from "@/styles/styles";
 
 export default function EventsPage() {
     const router = useRouter();

@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/firebaseConfig"; // Ensure the correct path
-import {styles} from "@/syles/styles";
+import {styles} from "@/styles/styles";
 
 export default function CreateEventScreen() {
     const router = useRouter();
