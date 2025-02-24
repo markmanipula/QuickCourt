@@ -1,11 +1,9 @@
-// Screen for creating an event
-
-import { View, Text, TextInput, Button, StyleSheet, ScrollView } from "react-native";
+import { View, Text, TextInput, Button, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/firebaseConfig"; // Ensure the correct path
-import {styles} from "@/styles/styles";
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function CreateEventScreen() {
     const router = useRouter();
@@ -130,74 +128,133 @@ export default function CreateEventScreen() {
     };
 
     return (
-        <ScrollView style={styles.container}>
-            <Button title="Go Back" onPress={() => router.back()} />
+        <LinearGradient colors={["#ff9800", "#ff5722"]} style={styles.container}>
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
+                <TouchableOpacity onPress={() => router.back()} style={styles.goBackButton}>
+                    <Text style={styles.goBackText}>Go Back</Text>
+                </TouchableOpacity>
 
-            <Text style={styles.heading}>Create a New Event</Text>
+                <Text style={styles.heading}>Create a New Event</Text>
 
-            <Text style={styles.label}>Event Title</Text>
-            <TextInput
-                placeholder="Enter event title"
-                value={title}
-                onChangeText={setTitle}
-                style={styles.input}
-            />
+                <Text style={styles.label}>Event Title</Text>
+                <TextInput
+                    placeholder="Enter event title"
+                    value={title}
+                    onChangeText={setTitle}
+                    style={styles.input}
+                />
 
-            <Text style={styles.label}>Address</Text>
-            <TextInput
-                placeholder="Enter address"
-                value={location}
-                onChangeText={setLocation}
-                style={styles.input}
-            />
+                <Text style={styles.label}>Address</Text>
+                <TextInput
+                    placeholder="Enter address"
+                    value={location}
+                    onChangeText={setLocation}
+                    style={styles.input}
+                />
 
-            <Text style={styles.label}>Date</Text>
-            <TextInput
-                placeholder="MM/DD/YYYY"
-                value={date}
-                onChangeText={formatDateInput}
-                keyboardType="numeric"
-                style={styles.input}
-                maxLength={10}
-            />
+                <Text style={styles.label}>Date</Text>
+                <TextInput
+                    placeholder="MM/DD/YYYY"
+                    value={date}
+                    onChangeText={formatDateInput}
+                    keyboardType="numeric"
+                    style={styles.input}
+                    maxLength={10}
+                />
 
-            <Text style={styles.label}>Time</Text>
-            <TextInput
-                placeholder="HH:MM"
-                value={time}
-                onChangeText={formatTimeInput}
-                keyboardType="numeric"
-                style={styles.input}
-                maxLength={5}
-            />
+                <Text style={styles.label}>Time</Text>
+                <TextInput
+                    placeholder="HH:MM"
+                    value={time}
+                    onChangeText={formatTimeInput}
+                    keyboardType="numeric"
+                    style={styles.input}
+                    maxLength={5}
+                />
 
-            <Text style={styles.label}>Max Participants</Text>
-            <TextInput
-                placeholder="Enter max participants"
-                value={maxParticipants}
-                onChangeText={setMaxParticipants}
-                keyboardType="numeric"
-                style={styles.input}
-            />
+                <Text style={styles.label}>Max Participants</Text>
+                <TextInput
+                    placeholder="Enter max participants"
+                    value={maxParticipants}
+                    onChangeText={setMaxParticipants}
+                    keyboardType="numeric"
+                    style={styles.input}
+                />
 
-            <Text style={styles.label}>Cost ($)</Text>
-            <TextInput
-                placeholder="Enter cost"
-                value={cost}
-                onChangeText={setCost}
-                keyboardType="numeric"
-                style={styles.input}
-            />
+                <Text style={styles.label}>Cost ($)</Text>
+                <TextInput
+                    placeholder="Enter cost"
+                    value={cost}
+                    onChangeText={setCost}
+                    keyboardType="numeric"
+                    style={styles.input}
+                />
 
-            <Text style={styles.label}>Details (Optional)</Text>
-            <TextInput
-                placeholder="Enter additional details"
-                value={details}
-                onChangeText={setDetails}
-                style={styles.input}
-            />
+                <Text style={styles.label}>Details (Optional)</Text>
+                <TextInput
+                    placeholder="Enter additional details"
+                    value={details}
+                    onChangeText={setDetails}
+                    style={styles.input}
+                />
 
-            <Button title="Create Event" onPress={handleSubmit} />
-        </ScrollView>
+                <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+                    <Text style={styles.submitButtonText}>Create Event</Text>
+                </TouchableOpacity>
+            </ScrollView>
+        </LinearGradient>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 16,
+        paddingLeft: 24,  // Added padding to move content left
+        backgroundColor: "#f9f9f9",
+    },
+    scrollContainer: {
+        paddingBottom: 32,  // Added padding to bottom of the ScrollView for a more comfortable scroll
+    },
+    heading: {
+        fontSize: 24,
+        fontWeight: "bold",
+        textAlign: "center",
+        marginVertical: 16,
+    },
+    label: {
+        fontSize: 16,
+        marginVertical: 8,
+        fontWeight: "600",
+    },
+    input: {
+        height: 48,
+        borderColor: "#ccc",
+        borderWidth: 1,
+        borderRadius: 8,
+        paddingLeft: 12,
+        fontSize: 16,
+        marginBottom: 16,
+        width: "100%",  // Full width for inputs
+    },
+    submitButton: {
+        backgroundColor: "#ff5722",
+        paddingVertical: 12,
+        borderRadius: 8,
+        marginTop: 16,
+        alignItems: "center",
+    },
+    submitButtonText: {
+        color: "#fff",
+        fontSize: 18,
+        fontWeight: "600",
+    },
+    goBackButton: {
+        marginBottom: 16,
+    },
+    goBackText: {
+        fontSize: 18,
+        fontWeight: "600",
+        color: "#fff",
+    },
+});
