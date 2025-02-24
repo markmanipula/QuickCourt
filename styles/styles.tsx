@@ -104,5 +104,17 @@ export const styles = StyleSheet.create({
         color: '#fff', // White text
         fontSize: 16,
         fontWeight: 'bold',
+    },
+    viewParticipantsButton: {
+        backgroundColor: '#007AFF',
+        padding: 10,
+        borderRadius: 8,
+        alignItems: 'center',
+        marginVertical: 10,
+    },
+    viewParticipantsButtonText: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: 'bold',
     }
 });

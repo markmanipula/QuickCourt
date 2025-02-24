@@ -134,6 +134,10 @@ export default function EventDetailsPage() {
         router.push(`/edit-event/${eventId}`);
     };
 
+    const handleViewParticipants = () => {
+        router.push(`/view-participants/${eventId}`);
+    };
+
     if (loading) {
         return (
             <View style={styles.container}>
@@ -183,6 +187,13 @@ export default function EventDetailsPage() {
                     </Text>
                 </TouchableOpacity>
             )}
+
+            <TouchableOpacity
+                style={styles.viewParticipantsButton}
+                onPress={handleViewParticipants}
+            >
+                <Text style={styles.viewParticipantsButtonText}>See Current Participants</Text>
+            </TouchableOpacity>
 
             {isOrganizer && (
                 <TouchableOpacity
