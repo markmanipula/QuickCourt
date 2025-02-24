@@ -1,4 +1,14 @@
-import { View, Text, TextInput, StyleSheet, Button, Alert, Image } from "react-native";
+import {
+    View,
+    Text,
+    TextInput,
+    StyleSheet,
+    Button,
+    Alert,
+    Image,
+    TouchableWithoutFeedback,
+    Keyboard
+} from "react-native";
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
@@ -49,53 +59,55 @@ export default function AuthPage() {
     };
 
     return (
-        <LinearGradient colors={['#4c669f', '#3b5998', '#192f5d']} style={styles.gradientContainer}>
-            <View style={styles.container}>
-                <Image
-                    source={require('@/assets/images/volleyball.png')} // Make sure to replace with your actual image file path
-                    style={styles.image}
-                />
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+            <LinearGradient colors={['#4c669f', '#3b5998', '#192f5d']} style={styles.gradientContainer}>
+                <View style={styles.container}>
+                    <Image
+                        source={require('@/assets/images/volleyball.png')} // Make sure to replace with your actual image file path
+                        style={styles.image}
+                    />
 
-                <Text style={styles.welcomeText}>Welcome to QuickCourt!</Text>
+                    <Text style={styles.welcomeText}>Welcome to QuickCourt!</Text>
 
-                {isSignUp && (
-                    <>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="First Name"
-                            value={firstName}
-                            onChangeText={setFirstName}
-                        />
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Last Name"
-                            value={lastName}
-                            onChangeText={setLastName}
-                        />
-                    </>
-                )}
+                    {isSignUp && (
+                        <>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="First Name"
+                                value={firstName}
+                                onChangeText={setFirstName}
+                            />
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Last Name"
+                                value={lastName}
+                                onChangeText={setLastName}
+                            />
+                        </>
+                    )}
 
-                <TextInput
-                    style={styles.input}
-                    placeholder="Email"
-                    value={email}
-                    onChangeText={setEmail}
-                    keyboardType="email-address"
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Password"
-                    secureTextEntry
-                    value={password}
-                    onChangeText={setPassword}
-                />
-                {error && <Text style={styles.errorText}>{error}</Text>}
-                <Button title={isSignUp ? "Sign Up" : "Login"} onPress={handleAuth} />
-                <Text style={styles.toggleText} onPress={toggleSignUpLogin}>
-                    {isSignUp ? "Already have an account? Log in" : "Don't have an account? Sign up"}
-                </Text>
-            </View>
-        </LinearGradient>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Email"
+                        value={email}
+                        onChangeText={setEmail}
+                        keyboardType="email-address"
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Password"
+                        secureTextEntry
+                        value={password}
+                        onChangeText={setPassword}
+                    />
+                    {error && <Text style={styles.errorText}>{error}</Text>}
+                    <Button title={isSignUp ? "Sign Up" : "Login"} onPress={handleAuth} />
+                    <Text style={styles.toggleText} onPress={toggleSignUpLogin}>
+                        {isSignUp ? "Already have an account? Log in" : "Don't have an account? Sign up"}
+                    </Text>
+                </View>
+            </LinearGradient>
+        </TouchableWithoutFeedback>
     );
 }
 
