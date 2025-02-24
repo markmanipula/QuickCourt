@@ -1,4 +1,4 @@
-import { View, Text, TextInput, StyleSheet, Button, Alert } from "react-native";
+import { View, Text, TextInput, StyleSheet, Button, Alert, Image } from "react-native";
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
@@ -49,7 +49,12 @@ export default function AuthPage() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>{isSignUp ? "Sign Up" : "Login"}</Text>
+            <Image
+                source={require('@/assets/images/volleyball.png')} // Make sure to replace with your actual image file path
+                style={styles.image}
+            />
+
+            <Text style={styles.welcomeText}>Welcome to QuickCourt!</Text>
 
             {isSignUp && (
                 <>
@@ -93,7 +98,9 @@ export default function AuthPage() {
 
 const styles = StyleSheet.create({
     container: { flex: 1, justifyContent: "center", alignItems: "center", padding: 20 },
+    welcomeText: { fontSize: 32, fontWeight: "bold", marginBottom: 20, textAlign: 'center' },
     header: { fontSize: 24, fontWeight: "bold", marginBottom: 20 },
+    image: { width: 150, height: 150, marginBottom: 20 }, // Adjust the image size as needed
     input: { width: "100%", padding: 10, marginBottom: 10, borderWidth: 1, borderColor: "#ccc", borderRadius: 5 },
     errorText: { color: "red", fontSize: 14, marginBottom: 10 },
     toggleText: { color: "blue", marginTop: 10, textDecorationLine: "underline" },
