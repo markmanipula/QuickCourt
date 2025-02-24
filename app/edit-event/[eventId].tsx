@@ -16,6 +16,7 @@ export default function EditEventScreen() {
     const [maxParticipants, setMaxParticipants] = useState("");
     const [details, setDetails] = useState("");
     const [organizer, setOrganizer] = useState<any>(null);
+    const [currentParticipants, setCurrentParticipants] = useState(0);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -39,11 +40,12 @@ export default function EditEventScreen() {
                 if (data) {
                     setTitle(data.title);
                     setLocation(data.location);
-                    setDate(new Date(data.date).toLocaleDateString("en-US")); // Ensure MM/DD/YYYY format
+                    setDate(new Date(data.date).toLocaleDateString("en-US"));
                     setTime(data.time);
                     setCost(data.cost.toString());
                     setMaxParticipants(data.maxParticipants.toString());
                     setDetails(data.details || "");
+                    setCurrentParticipants(data.participants.length || 0); // Assuming you get currentParticipants from the API
                     console.log("Fetched event data:", data);
                 }
             } catch (error) {
@@ -103,6 +105,12 @@ export default function EditEventScreen() {
     const handleSubmit = async () => {
         if (!title || !location || !date || !time || !maxParticipants || !cost || !organizer) {
             alert("Please fill out all required fields.");
+            return;
+        }
+
+        // Check if current participants exceed the new max participants
+        if (currentParticipants > parseInt(maxParticipants)) {
+            alert(`Cannot update event. Current participants (${currentParticipants}) exceed the new maximum (${maxParticipants}).`);
             return;
         }
 
