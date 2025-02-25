@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
+import {View, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity, Alert} from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { onAuthStateChanged } from "firebase/auth";
@@ -106,29 +106,44 @@ export default function EventDetailsPage() {
     const handleLeaveEvent = async () => {
         if (!eventId || !participant) return;
 
-        const participantName = `${participant.firstName} ${participant.lastName}`;
-        const eventData = { participant: participantName };
+        Alert.alert(
+            "Leave Event",
+            "Are you sure you want to leave this event?",
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel"
+                },
+                {
+                    text: "Leave",
+                    onPress: async () => {
+                        const participantName = `${participant.firstName} ${participant.lastName}`;
+                        const eventData = { participant: participantName };
 
-        setLeaving(true);
+                        setLeaving(true);
 
-        try {
-            const response = await fetch(`http://10.0.0.9:5001/events/${eventId}/leave`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(eventData),
-            });
+                        try {
+                            const response = await fetch(`http://10.0.0.9:5001/events/${eventId}/leave`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(eventData),
+                            });
 
-            const responseData = await response.json();
-            if (!response.ok) throw new Error(responseData.error || 'Failed to leave event');
+                            const responseData = await response.json();
+                            if (!response.ok) throw new Error(responseData.error || 'Failed to leave event');
 
-            setEvent(responseData.event);
-            setIsParticipant(false);
-            alert(`Successfully left event!`);
-        } catch (err: any) {
-            alert(`Failed to leave event: ${err.message}`);
-        } finally {
-            setLeaving(false);
-        }
+                            setEvent(responseData.event);
+                            setIsParticipant(false);
+                            alert("Successfully left event!");
+                        } catch (err: any) {
+                            alert(`Failed to leave event: ${err.message}`);
+                        } finally {
+                            setLeaving(false);
+                        }
+                    }
+                }
+            ]
+        );
     };
 
     const handleEditEvent = () => {
@@ -157,8 +172,7 @@ export default function EventDetailsPage() {
 
     return (
         <LinearGradient colors={['#4c669f', '#3b5998', '#192f5d']} style={styles.container}>
-
-            <ScrollView contentContainerStyle={styles.container}>
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.goBackButton}>
                     <View style={styles.backButtonContent}>
                         <Ionicons name="arrow-back" size={24} color="#fff" />
@@ -203,7 +217,11 @@ export default function EventDetailsPage() {
                             {joining ? "Joining..." : "Join Event"}
                         </Text>
                     </TouchableOpacity>
-                ) : (
+                ) : null}
+            </ScrollView>
+
+            {isParticipant && (
+                <View style={styles.leaveButtonContainer}>
                     <TouchableOpacity
                         style={styles.leaveButton}
                         onPress={handleLeaveEvent}
@@ -213,8 +231,8 @@ export default function EventDetailsPage() {
                             {leaving ? "Leaving..." : "Leave Event"}
                         </Text>
                     </TouchableOpacity>
-                )}
-            </ScrollView>
+                </View>
+            )}
         </LinearGradient>
     );
 }
@@ -225,8 +243,12 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: 'transparent',
     },
+    scrollContainer: {
+        flexGrow: 1,
+        paddingBottom: 100, // Space for the leave button
+    },
     eventHeader: {
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        backgroundColor: '#1e3a8a',
         borderRadius: 10,
         padding: 15,
         marginBottom: 20,
@@ -238,17 +260,24 @@ const styles = StyleSheet.create({
     },
     details: {
         fontSize: 16,
-        color: '#fff',
+        color: '#e0e7ff',
         marginBottom: 10,
     },
     joinButton: {
-        backgroundColor: '#2575fc',
+        backgroundColor: '#2563eb',
         padding: 12,
         borderRadius: 8,
         marginTop: 10,
     },
+    leaveButtonContainer: {
+        position: 'absolute',
+        bottom: 20,
+        left: 0,
+        right: 0,
+        paddingHorizontal: 20,
+    },
     leaveButton: {
-        backgroundColor: '#ff6f61',
+        backgroundColor: '#dc2626',
         padding: 12,
         borderRadius: 8,
         marginTop: 10,
@@ -257,16 +286,16 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         color: '#fff',
+        textAlign: 'center',
     },
     leaveButtonText: {
         fontSize: 16,
         fontWeight: 'bold',
         color: '#fff',
         textAlign: 'center',
-
     },
     viewParticipantsButton: {
-        backgroundColor: '#6a11cb',
+        backgroundColor: '#0d9488',
         padding: 12,
         borderRadius: 8,
         marginTop: 15,
@@ -277,7 +306,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     editButton: {
-        backgroundColor: '#ffcc00',
+        backgroundColor: '#0d9488',
         padding: 12,
         borderRadius: 8,
         marginTop: 10,
