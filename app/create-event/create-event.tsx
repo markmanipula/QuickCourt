@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Button, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, Button, StyleSheet, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform } from "react-native";
 import { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -128,81 +128,86 @@ export default function CreateEventScreen() {
     };
 
     return (
-        <LinearGradient colors={["#ff9800", "#ff5722"]} style={styles.container}>
-            <ScrollView contentContainerStyle={styles.scrollContainer}>
-                <TouchableOpacity onPress={() => router.back()} style={styles.goBackButton}>
-                    <Text style={styles.goBackText}>Go Back</Text>
-                </TouchableOpacity>
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+            <LinearGradient colors={['#4c669f', '#3b5998', '#192f5d']} style={styles.container}>
+                <ScrollView contentContainerStyle={styles.scrollContainer}>
+                    <TouchableOpacity onPress={() => router.back()} style={styles.goBackButton}>
+                        <Text style={styles.goBackText}>Go Back</Text>
+                    </TouchableOpacity>
 
-                <Text style={styles.heading}>Create a New Event</Text>
+                    <Text style={styles.heading}>Create a New Event</Text>
 
-                <Text style={styles.label}>Event Title</Text>
-                <TextInput
-                    placeholder="Enter event title"
-                    value={title}
-                    onChangeText={setTitle}
-                    style={styles.input}
-                />
+                    <Text style={styles.label}>Event Title</Text>
+                    <TextInput
+                        placeholder="Enter event title"
+                        value={title}
+                        onChangeText={setTitle}
+                        style={styles.input}
+                    />
 
-                <Text style={styles.label}>Address</Text>
-                <TextInput
-                    placeholder="Enter address"
-                    value={location}
-                    onChangeText={setLocation}
-                    style={styles.input}
-                />
+                    <Text style={styles.label}>Address</Text>
+                    <TextInput
+                        placeholder="Enter address"
+                        value={location}
+                        onChangeText={setLocation}
+                        style={styles.input}
+                    />
 
-                <Text style={styles.label}>Date</Text>
-                <TextInput
-                    placeholder="MM/DD/YYYY"
-                    value={date}
-                    onChangeText={formatDateInput}
-                    keyboardType="numeric"
-                    style={styles.input}
-                    maxLength={10}
-                />
+                    <Text style={styles.label}>Date</Text>
+                    <TextInput
+                        placeholder="MM/DD/YYYY"
+                        value={date}
+                        onChangeText={formatDateInput}
+                        keyboardType="numeric"
+                        style={styles.input}
+                        maxLength={10}
+                    />
 
-                <Text style={styles.label}>Time</Text>
-                <TextInput
-                    placeholder="HH:MM"
-                    value={time}
-                    onChangeText={formatTimeInput}
-                    keyboardType="numeric"
-                    style={styles.input}
-                    maxLength={5}
-                />
+                    <Text style={styles.label}>Time</Text>
+                    <TextInput
+                        placeholder="HH:MM"
+                        value={time}
+                        onChangeText={formatTimeInput}
+                        keyboardType="numeric"
+                        style={styles.input}
+                        maxLength={5}
+                    />
 
-                <Text style={styles.label}>Max Participants</Text>
-                <TextInput
-                    placeholder="Enter max participants"
-                    value={maxParticipants}
-                    onChangeText={setMaxParticipants}
-                    keyboardType="numeric"
-                    style={styles.input}
-                />
+                    <Text style={styles.label}>Max Participants</Text>
+                    <TextInput
+                        placeholder="Enter max participants"
+                        value={maxParticipants}
+                        onChangeText={setMaxParticipants}
+                        keyboardType="numeric"
+                        style={styles.input}
+                    />
 
-                <Text style={styles.label}>Cost ($)</Text>
-                <TextInput
-                    placeholder="Enter cost"
-                    value={cost}
-                    onChangeText={setCost}
-                    keyboardType="numeric"
-                    style={styles.input}
-                />
+                    <Text style={styles.label}>Cost ($)</Text>
+                    <TextInput
+                        placeholder="Enter cost"
+                        value={cost}
+                        onChangeText={setCost}
+                        keyboardType="numeric"
+                        style={styles.input}
+                    />
 
-                <Text style={styles.label}>Details (Optional)</Text>
-                <TextInput
-                    placeholder="Enter additional details"
-                    value={details}
-                    onChangeText={setDetails}
-                    style={styles.input}
-                />
+                    <Text style={styles.label}>Details (Optional)</Text>
+                    <TextInput
+                        placeholder="Enter additional details"
+                        value={details}
+                        onChangeText={setDetails}
+                        style={styles.input}
+                    />
 
-                <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-                    <Text style={styles.submitButtonText}>Create Event</Text>
-                </TouchableOpacity>
-            </ScrollView>
-        </LinearGradient>
+                    <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+                        <Text style={styles.submitButtonText}>Create Event</Text>
+                    </TouchableOpacity>
+                </ScrollView>
+            </LinearGradient>
+        </KeyboardAvoidingView>
     );
 }
 
@@ -233,12 +238,13 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 8,
         paddingLeft: 12,
+        backgroundColor: "white",
         fontSize: 16,
         marginBottom: 16,
         width: "100%",  // Full width for inputs
     },
     submitButton: {
-        backgroundColor: "#ff5722",
+        backgroundColor: "#ffa722",
         paddingVertical: 12,
         borderRadius: 8,
         marginTop: 16,
