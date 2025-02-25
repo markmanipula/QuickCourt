@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/firebaseConfig"; // Ensure the correct path
 import { LinearGradient } from 'expo-linear-gradient';
+import {Ionicons} from "@expo/vector-icons";
 
 export default function CreateEventScreen() {
     const router = useRouter();
@@ -135,7 +136,10 @@ export default function CreateEventScreen() {
             <LinearGradient colors={['#4c669f', '#3b5998', '#192f5d']} style={styles.container}>
                 <ScrollView contentContainerStyle={styles.scrollContainer}>
                     <TouchableOpacity onPress={() => router.back()} style={styles.goBackButton}>
-                        <Text style={styles.goBackText}>Go Back</Text>
+                        <View style={styles.backButtonContent}>
+                            <Ionicons name="arrow-back" size={24} color="#fff" />
+                            <Text style={styles.goBackText}>Back</Text>
+                        </View>
                     </TouchableOpacity>
 
                     <Text style={styles.heading}>Create a New Event</Text>
@@ -256,11 +260,18 @@ const styles = StyleSheet.create({
         fontWeight: "600",
     },
     goBackButton: {
+        flexDirection: "row", // Aligns the icon and text in a row
+        alignItems: "center", // Centers them vertically
         marginBottom: 16,
+    },
+    backButtonContent: {
+        flexDirection: "row", // Makes sure icon and text are in the same row
+        alignItems: "center",
     },
     goBackText: {
         fontSize: 18,
         fontWeight: "600",
         color: "#fff",
+        marginLeft: 8, // Adds space between the icon and the text
     },
 });
