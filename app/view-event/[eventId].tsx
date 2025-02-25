@@ -7,7 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import {Ionicons} from "@expo/vector-icons"; // Importing gradient component
 
 export default function EventDetailsPage() {
-    const { eventId } = useLocalSearchParams();
+    const {eventId} = useLocalSearchParams();
     const [event, setEvent] = useState<any | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -25,7 +25,7 @@ export default function EventDetailsPage() {
                 const nameParts = fullName.split(" ");
                 const firstName = nameParts[0];
                 const lastName = nameParts.length > 1 ? nameParts.slice(1).join(" ") : "";
-                setParticipant({ firstName, lastName });
+                setParticipant({firstName, lastName});
             } else {
                 setParticipant(null);
             }
@@ -79,14 +79,14 @@ export default function EventDetailsPage() {
         if (!eventId || !participant) return;
 
         const participantName = `${participant.firstName} ${participant.lastName}`;
-        const eventData = { participant: participantName };
+        const eventData = {participant: participantName};
 
         setJoining(true);
 
         try {
             const response = await fetch(`http://10.0.0.9:5001/events/${eventId}/join`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(eventData),
             });
 
@@ -118,14 +118,14 @@ export default function EventDetailsPage() {
                     text: "Leave",
                     onPress: async () => {
                         const participantName = `${participant.firstName} ${participant.lastName}`;
-                        const eventData = { participant: participantName };
+                        const eventData = {participant: participantName};
 
                         setLeaving(true);
 
                         try {
                             const response = await fetch(`http://10.0.0.9:5001/events/${eventId}/leave`, {
                                 method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
+                                headers: {'Content-Type': 'application/json'},
                                 body: JSON.stringify(eventData),
                             });
 
@@ -190,7 +190,7 @@ export default function EventDetailsPage() {
     if (loading) {
         return (
             <View style={styles.container}>
-                <ActivityIndicator size="large" color="#0000ff" />
+                <ActivityIndicator size="large" color="#0000ff"/>
             </View>
         );
     }
@@ -208,14 +208,15 @@ export default function EventDetailsPage() {
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.goBackButton}>
                     <View style={styles.backButtonContent}>
-                        <Ionicons name="arrow-back" size={24} color="#fff" />
+                        <Ionicons name="arrow-back" size={24} color="#fff"/>
                         <Text style={styles.goBackText}>Back</Text>
                     </View>
                 </TouchableOpacity>
                 <View style={styles.eventHeader}>
                     <Text style={styles.header}>{event.title ?? "No Title"}</Text>
                     <Text style={styles.details}>Location: {event.location ?? "Unknown"}</Text>
-                    <Text style={styles.details}>Date: {event.date ? new Date(event.date).toLocaleDateString() : "TBA"}</Text>
+                    <Text
+                        style={styles.details}>Date: {event.date ? new Date(event.date).toLocaleDateString() : "TBA"}</Text>
                     <Text style={styles.details}>Time: {event.time ?? "TBA"}</Text>
                     <Text style={styles.details}>Description: {event.details ?? "No details available"}</Text>
                     <Text style={styles.details}>Organizer: {event.organizer ?? "Unknown"}</Text>
@@ -240,12 +241,15 @@ export default function EventDetailsPage() {
                     </TouchableOpacity>
                 )}
 
-                {isOrganizer && (
+                {isParticipant && (
                     <TouchableOpacity
-                        style={styles.deleteButton}
-                        onPress={handleDeleteEvent}
+                        style={styles.leaveButton}
+                        onPress={handleLeaveEvent}
+                        disabled={leaving}
                     >
-                        <Text style={styles.deleteButtonText}>Delete Event</Text>
+                        <Text style={styles.leaveButtonText}>
+                            {leaving ? "Leaving..." : "Leave Event"}
+                        </Text>
                     </TouchableOpacity>
                 )}
 
@@ -260,34 +264,36 @@ export default function EventDetailsPage() {
                         </Text>
                     </TouchableOpacity>
                 ) : null}
+
             </ScrollView>
 
-            {isParticipant && (
-                <View style={styles.leaveButtonContainer}>
+            {/* Wrapping the Delete button in a container that pushes it to the bottom */}
+            <View style={styles.buttonsWrapper}>
+                {isOrganizer && (
                     <TouchableOpacity
-                        style={styles.leaveButton}
-                        onPress={handleLeaveEvent}
-                        disabled={leaving}
+                        style={styles.deleteButton}
+                        onPress={handleDeleteEvent}
                     >
-                        <Text style={styles.leaveButtonText}>
-                            {leaving ? "Leaving..." : "Leave Event"}
-                        </Text>
+                        <Text style={styles.deleteButtonText}>Delete Event</Text>
                     </TouchableOpacity>
-                </View>
-            )}
+                )}
+            </View>
         </LinearGradient>
     );
+
 }
 
+// Container now has flex: 1 to take up full height
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
         backgroundColor: 'transparent',
+        justifyContent: 'space-between', // Ensure the content is spaced out
     },
     scrollContainer: {
         flexGrow: 1,
-        paddingBottom: 100, // Space for the leave button
+        paddingBottom: 20, // Adjusted padding to allow space for buttons
     },
     eventHeader: {
         backgroundColor: '#1e3a8a',
@@ -312,11 +318,8 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     leaveButtonContainer: {
-        position: 'absolute',
-        bottom: 20,
-        left: 0,
-        right: 0,
         paddingHorizontal: 20,
+        marginTop: 15, // Added margin for spacing
     },
     leaveButton: {
         backgroundColor: '#dc2626',
@@ -376,6 +379,10 @@ const styles = StyleSheet.create({
         fontWeight: "600",
         color: "#fff",
         marginLeft: 8,
+    },
+    // Add a wrapper to hold the Delete button at the bottom
+    buttonsWrapper: {
+        marginTop: 'auto', // This makes the Delete button move to the bottom
     },
     deleteButton: {
         backgroundColor: "#b91c1c",
