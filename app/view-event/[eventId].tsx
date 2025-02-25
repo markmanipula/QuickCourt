@@ -154,6 +154,39 @@ export default function EventDetailsPage() {
         router.push(`/view-participants/${eventId}`);
     };
 
+    const handleDeleteEvent = async () => {
+        if (!eventId) return;
+
+        Alert.alert(
+            "Delete Event",
+            "Are you sure you want to delete this event? This action cannot be undone.",
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel"
+                },
+                {
+                    text: "Delete",
+                    onPress: async () => {
+                        try {
+                            const response = await fetch(`http://10.0.0.9:5001/events/${eventId}`, {
+                                method: "DELETE",
+                            });
+
+                            if (!response.ok) throw new Error("Failed to delete event");
+
+                            alert("Event deleted successfully!");
+                            router.replace("/"); // Redirect to home or event list page
+                        } catch (err: any) {
+                            alert(`Failed to delete event: ${err.message}`);
+                        }
+                    },
+                    style: "destructive"
+                }
+            ]
+        );
+    };
+
     if (loading) {
         return (
             <View style={styles.container}>
@@ -204,6 +237,15 @@ export default function EventDetailsPage() {
                         onPress={handleEditEvent}
                     >
                         <Text style={styles.editButtonText}>Edit Event</Text>
+                    </TouchableOpacity>
+                )}
+
+                {isOrganizer && (
+                    <TouchableOpacity
+                        style={styles.deleteButton}
+                        onPress={handleDeleteEvent}
+                    >
+                        <Text style={styles.deleteButtonText}>Delete Event</Text>
                     </TouchableOpacity>
                 )}
 
@@ -334,5 +376,17 @@ const styles = StyleSheet.create({
         fontWeight: "600",
         color: "#fff",
         marginLeft: 8,
+    },
+    deleteButton: {
+        backgroundColor: "#b91c1c",
+        padding: 12,
+        borderRadius: 8,
+        marginTop: 10,
+        alignItems: "center",
+    },
+    deleteButtonText: {
+        fontSize: 16,
+        fontWeight: "bold",
+        color: "#fff",
     },
 });
