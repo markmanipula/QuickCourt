@@ -113,6 +113,25 @@ export default function EditEventScreen() {
             return;
         }
 
+        // Convert MM/DD/YYYY to YYYY-MM-DD for proper Date parsing
+        const [month, day, year] = date.split("/");
+        const formattedDate = `${year}-${month}-${day}`;
+
+        // Construct an ISO-compliant date-time string
+        const eventDateTime = new Date(`${formattedDate}T${time}:00`);
+
+        if (isNaN(eventDateTime.getTime())) {
+            alert("Invalid date or time format. Please enter a valid date and time.");
+            return;
+        }
+
+        const currentDateTime = new Date();
+
+        if (eventDateTime < currentDateTime) {
+            alert("The event date and time cannot be in the past.");
+            return;
+        }
+
         const organizerName = `${organizer.firstName} ${organizer.lastName}`;
 
         const eventData = {
