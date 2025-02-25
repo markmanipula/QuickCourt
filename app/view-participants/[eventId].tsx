@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
         marginBottom: 15,
     },
     participantCard: {
-        width: '100%',
+        width: '80%',
         backgroundColor: 'rgba(255, 255, 255, 0.15)',
         padding: 15,
         borderRadius: 10,
