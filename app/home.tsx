@@ -27,8 +27,12 @@ export default function HomePage() {
     }, []);
 
     const handleLogout = async () => {
-        await signOut(auth);
-        router.replace("/login");
+        try {
+            await signOut(auth);
+            router.replace("/login");
+        } catch (error) {
+            alert("Logout Failed. Something went wrong. Please try again.");
+        }
     };
 
     return (
