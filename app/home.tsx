@@ -4,7 +4,8 @@ import {
     StyleSheet,
     TouchableOpacity,
     Image,
-    SafeAreaView
+    SafeAreaView,
+    Alert
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
@@ -33,13 +34,29 @@ export default function HomePage() {
         return () => unsubscribe();
     }, []);
 
-    const handleLogout = async () => {
-        try {
-            await signOut(auth);
-            router.replace("/login");
-        } catch (error) {
-            alert("Logout Failed. Something went wrong. Please try again.");
-        }
+    const handleLogout = () => {
+        Alert.alert(
+            "Confirm Logout",
+            "Are you sure you want to log out?",
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel"
+                },
+                {
+                    text: "Logout",
+                    onPress: async () => {
+                        try {
+                            await signOut(auth);
+                            router.replace("/login");
+                        } catch (error) {
+                            alert("Logout Failed. Something went wrong. Please try again.");
+                        }
+                    },
+                    style: "destructive"
+                }
+            ]
+        );
     };
 
     return (
