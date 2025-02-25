@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
         padding: 15,
         marginBottom: 10,
         borderRadius: 8,
-        backgroundColor: "#f9f9f9",
+        backgroundColor: "#1e3a8a",
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,
@@ -113,22 +113,23 @@ const styles = StyleSheet.create({
     },
     eventTitle: {
         fontSize: 18,
+        color: "#e0e7ff",
         fontWeight: "600",
         marginBottom: 5,
     },
     eventLocation: {
         fontSize: 14,
-        color: "#555",
+        color: "#e0e7ff",
         marginBottom: 5,
     },
     eventOrganizer: {
         fontSize: 14,
-        color: "#555",
+        color: "#e0e7ff",
         marginBottom: 5,
     },
     eventDate: {
         fontSize: 14,
-        color: "#555",
+        color: "#e0e7ff",
     },
     noEventsText: {
         textAlign: "center",
