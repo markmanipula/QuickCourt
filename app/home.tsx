@@ -1,4 +1,11 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image, SafeAreaView } from "react-native";
+import {
+    View,
+    Text,
+    StyleSheet,
+    TouchableOpacity,
+    Image,
+    SafeAreaView
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import { signOut } from "firebase/auth";
@@ -14,11 +21,11 @@ export default function HomePage() {
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((user) => {
             if (user) {
-                const fullName = user.displayName || "Player";
+                const fullName = user.displayName?.trim() || "Player";
                 const nameParts = fullName.split(" ");
                 const firstName = nameParts[0];
-                const lastNameInitial = nameParts[1] ? nameParts[1][0] : "";
-                setUsername(`${firstName} ${lastNameInitial}.`);
+                const lastNameInitial = nameParts.length > 1 ? nameParts[1][0] : "";
+                setUsername(lastNameInitial ? `${firstName} ${lastNameInitial}.` : firstName);
             } else {
                 router.replace("/login");
             }
@@ -36,7 +43,7 @@ export default function HomePage() {
     };
 
     return (
-        <LinearGradient colors={["#ff9800", "#ff5722"]} style={styles.container}>
+        <LinearGradient colors={["#4c669f", "#3b5998", "#192f6a"]} style={styles.container}>
             <SafeAreaView style={styles.safeContainer}>
                 <Image source={require("@/assets/images/volleyball.png")} style={styles.logo} />
                 <Text style={styles.header}>Welcome, {username}!</Text>
