@@ -6,14 +6,17 @@ import {
     TouchableOpacity,
     Alert,
     Image,
+    ActivityIndicator,
+    KeyboardAvoidingView,
+    ScrollView,
+    Platform,
     TouchableWithoutFeedback,
-    Keyboard,
-    ActivityIndicator
+    Keyboard
 } from "react-native";
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth } from "@/firebaseConfig"; // Ensure the correct path
+import { auth } from "@/firebaseConfig";
 import { LinearGradient } from "expo-linear-gradient";
 
 export default function AuthPage() {
@@ -32,8 +35,7 @@ export default function AuthPage() {
             return;
         }
 
-        setLoading(true); // Show loader
-
+        setLoading(true);
         try {
             if (isSignUp) {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -41,7 +43,7 @@ export default function AuthPage() {
                 await updateProfile(user, { displayName: `${firstName} ${lastName}` });
 
                 Alert.alert("Success", "Account created! Please log in.");
-                setIsSignUp(false); // Switch to login mode
+                setIsSignUp(false);
             } else {
                 await signInWithEmailAndPassword(auth, email, password);
                 router.replace("/home");
@@ -49,74 +51,64 @@ export default function AuthPage() {
         } catch (error: any) {
             setError(error.message);
         } finally {
-            setLoading(false); // Hide loader
+            setLoading(false);
         }
     };
 
     return (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-            <LinearGradient colors={['#4c669f', '#3b5998', '#192f5d']} style={styles.gradientContainer}>
-                <View style={styles.container}>
-                    <Image
-                        source={require('@/assets/images/volleyball.png')}
-                        style={styles.image}
-                    />
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                style={{ flex: 1 }}
+            >
+                <ScrollView
+                    contentContainerStyle={styles.scrollContainer}
+                    keyboardShouldPersistTaps="handled"
+                >
+                    <LinearGradient colors={['#4c669f', '#3b5998', '#192f5d']} style={styles.gradientContainer}>
+                        <View style={styles.container}>
+                            <Image source={require('@/assets/images/volleyball.png')} style={styles.image} />
+                            <Text style={styles.welcomeText}>Welcome to QuickCourt!</Text>
 
-                    <Text style={styles.welcomeText}>Welcome to QuickCourt!</Text>
+                            {isSignUp && (
+                                <>
+                                    <TextInput style={styles.input} placeholder="First Name" value={firstName} onChangeText={setFirstName} />
+                                    <TextInput style={styles.input} placeholder="Last Name" value={lastName} onChangeText={setLastName} />
+                                </>
+                            )}
 
-                    {isSignUp && (
-                        <>
                             <TextInput
                                 style={styles.input}
-                                placeholder="First Name"
-                                value={firstName}
-                                onChangeText={setFirstName}
+                                placeholder="Email"
+                                value={email}
+                                onChangeText={setEmail}
+                                keyboardType="email-address"
                             />
                             <TextInput
                                 style={styles.input}
-                                placeholder="Last Name"
-                                value={lastName}
-                                onChangeText={setLastName}
+                                placeholder="Password"
+                                secureTextEntry
+                                value={password}
+                                onChangeText={setPassword}
                             />
-                        </>
-                    )}
 
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Email"
-                        value={email}
-                        onChangeText={setEmail}
-                        keyboardType="email-address"
-                    />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Password"
-                        secureTextEntry
-                        value={password}
-                        onChangeText={setPassword}
-                    />
+                            {error && <View style={styles.errorBox}><Text style={styles.errorText}>{error}</Text></View>}
 
-                    {error && (
-                        <View style={styles.errorBox}>
-                            <Text style={styles.errorText}>{error}</Text>
-                        </View>
-                    )}
+                            {loading ? (
+                                <ActivityIndicator size="large" color="#ffcc00" />
+                            ) : (
+                                <TouchableOpacity style={styles.authButton} onPress={handleAuth}>
+                                    <Text style={styles.authButtonText}>{isSignUp ? "Sign Up" : "Login"}</Text>
+                                </TouchableOpacity>
+                            )}
 
-                    {loading ? (
-                        <ActivityIndicator size="large" color="#ffcc00" />
-                    ) : (
-                        <TouchableOpacity style={styles.authButton} onPress={handleAuth}>
-                            <Text style={styles.authButtonText}>
-                                {isSignUp ? "Sign Up" : "Login"}
+                            <Text style={styles.toggleText} onPress={() => setIsSignUp(!isSignUp)}>
+                                {isSignUp ? "Already have an account? Log in" : "Don't have an account? Sign up"}
                             </Text>
-                        </TouchableOpacity>
-                    )}
-
-                    <Text style={styles.toggleText} onPress={() => setIsSignUp(!isSignUp)}>
-                        {isSignUp ? "Already have an account? Log in" : "Don't have an account? Sign up"}
-                    </Text>
-                </View>
-            </LinearGradient>
+                        </View>
+                    </LinearGradient>
+                </ScrollView>
+            </KeyboardAvoidingView>
         </TouchableWithoutFeedback>
     );
 }
@@ -124,6 +116,9 @@ export default function AuthPage() {
 const styles = StyleSheet.create({
     gradientContainer: {
         flex: 1,
+    },
+    scrollContainer: {
+        flexGrow: 1,
     },
     container: {
         flex: 1,
