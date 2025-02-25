@@ -86,18 +86,36 @@ export default function CreateEventScreen() {
             return;
         }
 
-        // Concatenate first and last name into a single string
         const organizerName = `${organizer.firstName} ${organizer.lastName}`;
+
+        // Convert MM/DD/YYYY to YYYY-MM-DD for proper Date parsing
+        const [month, day, year] = date.split("/");
+        const formattedDate = `${year}-${month}-${day}`;
+
+        // Construct an ISO-compliant date-time string
+        const eventDateTime = new Date(`${formattedDate}T${time}:00`);
+
+        if (isNaN(eventDateTime.getTime())) {
+            alert("Invalid date or time format. Please enter a valid date and time.");
+            return;
+        }
+
+        const currentDateTime = new Date();
+
+        if (eventDateTime < currentDateTime) {
+            alert("The event date and time cannot be in the past.");
+            return;
+        }
 
         const eventData = {
             title,
             location,
             date,
-            time, // Include time in the event data
+            time,
             maxParticipants,
             cost,
             details: details || "N/A",
-            organizer: organizerName, // Send organizer as a string
+            organizer: organizerName,
         };
 
         try {
@@ -111,7 +129,6 @@ export default function CreateEventScreen() {
             });
 
             if (!response.ok) {
-                console.log(response);
                 const errorText = await response.text();
                 console.error("Error response:", errorText);
                 throw new Error(`HTTP error! status: ${response.status}`);
