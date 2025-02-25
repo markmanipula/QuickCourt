@@ -3,17 +3,18 @@ import {
     Text,
     TextInput,
     StyleSheet,
-    Button,
+    TouchableOpacity,
     Alert,
     Image,
     TouchableWithoutFeedback,
-    Keyboard
+    Keyboard,
+    ActivityIndicator
 } from "react-native";
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "@/firebaseConfig"; // Ensure the correct path
-import { LinearGradient } from "expo-linear-gradient"; // Import LinearGradient
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function AuthPage() {
     const router = useRouter();
@@ -21,8 +22,9 @@ export default function AuthPage() {
     const [password, setPassword] = useState<string>("");
     const [firstName, setFirstName] = useState<string>("");
     const [lastName, setLastName] = useState<string>("");
-    const [isSignUp, setIsSignUp] = useState<boolean>(false); // Toggle between login & signup
+    const [isSignUp, setIsSignUp] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const handleAuth = async () => {
         if (!email || !password || (isSignUp && (!firstName || !lastName))) {
@@ -30,32 +32,25 @@ export default function AuthPage() {
             return;
         }
 
+        setLoading(true); // Show loader
+
         try {
             if (isSignUp) {
-                // Sign Up: Create a new user
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
-
-                // Update profile with first and last name
-                await updateProfile(user, {
-                    displayName: `${firstName} ${lastName}`,
-                });
+                await updateProfile(user, { displayName: `${firstName} ${lastName}` });
 
                 Alert.alert("Success", "Account created! Please log in.");
                 setIsSignUp(false); // Switch to login mode
             } else {
-                // Login: Authenticate user
                 await signInWithEmailAndPassword(auth, email, password);
-
-                router.replace("/home"); // Navigate to home page
+                router.replace("/home");
             }
         } catch (error: any) {
             setError(error.message);
+        } finally {
+            setLoading(false); // Hide loader
         }
-    };
-
-    const toggleSignUpLogin = () => {
-        setIsSignUp(prevState => !prevState); // Use previous state to toggle without triggering re-render issues
     };
 
     return (
@@ -63,7 +58,7 @@ export default function AuthPage() {
             <LinearGradient colors={['#4c669f', '#3b5998', '#192f5d']} style={styles.gradientContainer}>
                 <View style={styles.container}>
                     <Image
-                        source={require('@/assets/images/volleyball.png')} // Make sure to replace with your actual image file path
+                        source={require('@/assets/images/volleyball.png')}
                         style={styles.image}
                     />
 
@@ -100,9 +95,24 @@ export default function AuthPage() {
                         value={password}
                         onChangeText={setPassword}
                     />
-                    {error && <Text style={styles.errorText}>{error}</Text>}
-                    <Button title={isSignUp ? "Sign Up" : "Login"} onPress={handleAuth} />
-                    <Text style={styles.toggleText} onPress={toggleSignUpLogin}>
+
+                    {error && (
+                        <View style={styles.errorBox}>
+                            <Text style={styles.errorText}>{error}</Text>
+                        </View>
+                    )}
+
+                    {loading ? (
+                        <ActivityIndicator size="large" color="#ffcc00" />
+                    ) : (
+                        <TouchableOpacity style={styles.authButton} onPress={handleAuth}>
+                            <Text style={styles.authButtonText}>
+                                {isSignUp ? "Sign Up" : "Login"}
+                            </Text>
+                        </TouchableOpacity>
+                    )}
+
+                    <Text style={styles.toggleText} onPress={() => setIsSignUp(!isSignUp)}>
                         {isSignUp ? "Already have an account? Log in" : "Don't have an account? Sign up"}
                     </Text>
                 </View>
@@ -112,23 +122,71 @@ export default function AuthPage() {
 }
 
 const styles = StyleSheet.create({
-    gradientContainer: { flex: 1 }, // Full screen container for gradient background
-    container: { flex: 1, justifyContent: "center", alignItems: "center", padding: 20 },
-    welcomeText: { fontSize: 32, fontWeight: "bold", marginBottom: 20, textAlign: 'center', color: 'white' },
-    image: { width: 150, height: 150, marginBottom: 20 }, // Adjust the image size as needed
+    gradientContainer: {
+        flex: 1,
+    },
+    container: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 20,
+    },
+    welcomeText: {
+        fontSize: 32,
+        fontWeight: "bold",
+        marginBottom: 20,
+        textAlign: "center",
+        color: "white",
+    },
+    image: {
+        width: 150,
+        height: 150,
+        marginBottom: 20,
+    },
     input: {
         width: "100%",
-        padding: 10,
-        marginBottom: 10,
+        padding: 12,
+        marginBottom: 12,
         borderWidth: 1,
-        borderColor: "#ccc",
-        borderRadius: 5,
-        backgroundColor: 'white'
+        borderColor: "#ddd",
+        borderRadius: 10,
+        backgroundColor: "white",
+        fontSize: 16,
+        elevation: 3,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
     },
-    errorText: { color: "red", fontSize: 14, marginBottom: 10 },
-    toggleText: {
-        color: 'white',
+    errorBox: {
+        backgroundColor: "#ffcccc",
+        padding: 10,
+        borderRadius: 5,
+        marginBottom: 10,
+        width: "100%",
+        alignItems: "center",
+    },
+    errorText: {
+        color: "#d9534f",
+        fontSize: 14,
+    },
+    authButton: {
+        backgroundColor: "#ffcc00",
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        borderRadius: 8,
+        alignItems: "center",
+        width: "100%",
         marginTop: 10,
-        textDecorationLine: 'underline'
+    },
+    authButtonText: {
+        fontSize: 18,
+        fontWeight: "bold",
+        color: "#192f5d",
+    },
+    toggleText: {
+        color: "white",
+        marginTop: 10,
+        textDecorationLine: "underline",
     },
 });
