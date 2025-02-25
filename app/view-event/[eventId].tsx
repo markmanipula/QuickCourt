@@ -295,18 +295,21 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     viewParticipantsButton: {
-        backgroundColor: '#0d9488',
+        backgroundColor: 'transparent', // Outlined button
+        borderWidth: 2,
+        borderColor: '#5eead4', // Lighter teal
         padding: 12,
         borderRadius: 8,
         marginTop: 15,
     },
     viewParticipantsButtonText: {
         fontSize: 16,
-        color: '#fff',
+        color: '#5eead4', // Matches border color
         textAlign: 'center',
+        fontWeight: 'bold',
     },
     editButton: {
-        backgroundColor: '#0d9488',
+        backgroundColor: '#0d9488', // Darker teal
         padding: 12,
         borderRadius: 8,
         marginTop: 10,
@@ -315,20 +318,21 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#fff',
         textAlign: 'center',
+        fontWeight: 'bold',
     },
     goBackButton: {
-        flexDirection: "row", // Aligns the icon and text in a row
-        alignItems: "center", // Centers them vertically
+        flexDirection: "row",
+        alignItems: "center",
         marginBottom: 16,
     },
     backButtonContent: {
-        flexDirection: "row", // Makes sure icon and text are in the same row
+        flexDirection: "row",
         alignItems: "center",
     },
     goBackText: {
         fontSize: 18,
         fontWeight: "600",
         color: "#fff",
-        marginLeft: 8, // Adds space between the icon and the text
+        marginLeft: 8,
     },
 });
