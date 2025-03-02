@@ -1,21 +1,22 @@
-import { View, Text, TextInput, Button, StyleSheet, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform } from "react-native";
+import { View, Text, TextInput, Button, StyleSheet, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Switch } from "react-native";
 import { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/firebaseConfig"; // Ensure the correct path
+import { auth } from "@/firebaseConfig";
 import { LinearGradient } from 'expo-linear-gradient';
-import {Ionicons} from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function CreateEventScreen() {
     const router = useRouter();
-    const [title, setTitle] = useState(""); // Event title
+    const [title, setTitle] = useState("");
     const [location, setLocation] = useState("");
     const [date, setDate] = useState("");
-    const [time, setTime] = useState(""); // State for event time
+    const [time, setTime] = useState("");
     const [cost, setCost] = useState("");
-    const [maxParticipants, setMaxParticipants] = useState(""); // Max participants
+    const [maxParticipants, setMaxParticipants] = useState("");
     const [details, setDetails] = useState("");
-    const [organizer, setOrganizer] = useState<any>(null); // User info
+    const [isInviteOnly, setIsInviteOnly] = useState(false); // New state for event privacy
+    const [organizer, setOrganizer] = useState<any>(null);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -23,18 +24,16 @@ export default function CreateEventScreen() {
                 const fullName = user.displayName || "User";
                 const nameParts = fullName.split(" ");
                 const firstName = nameParts[0];
-                const lastName = nameParts.length > 1 ? nameParts.slice(1).join(" ") : ""; // Last name can be multiple words
+                const lastName = nameParts.length > 1 ? nameParts.slice(1).join(" ") : "";
                 setOrganizer({ firstName, lastName });
-                console.log("Fetched organizer:", { firstName, lastName }); // Debugging output
             } else {
-                router.replace("/login"); // Redirect to login if not logged in
+                router.replace("/login");
             }
         });
 
-        return () => unsubscribe(); // Cleanup subscription
-    }, []); // Run only once on mount
+        return () => unsubscribe();
+    }, []);
 
-    // Helper function to format date input as MM/DD/YYYY
     const formatDateInput = (text: string) => {
         let cleaned = text.replace(/\D/g, "");
         if (cleaned.length === 0) {
@@ -58,7 +57,6 @@ export default function CreateEventScreen() {
         setDate(formattedDate);
     };
 
-    // Helper function to format time input as HH:MM
     const formatTimeInput = (text: string) => {
         let cleaned = text.replace(/\D/g, "");
         if (cleaned.length === 0) {
@@ -87,12 +85,8 @@ export default function CreateEventScreen() {
         }
 
         const organizerName = `${organizer.firstName} ${organizer.lastName}`;
-
-        // Convert MM/DD/YYYY to YYYY-MM-DD for proper Date parsing
         const [month, day, year] = date.split("/");
         const formattedDate = `${year}-${month}-${day}`;
-
-        // Construct an ISO-compliant date-time string
         const eventDateTime = new Date(`${formattedDate}T${time}:00`);
 
         if (isNaN(eventDateTime.getTime())) {
@@ -101,7 +95,6 @@ export default function CreateEventScreen() {
         }
 
         const currentDateTime = new Date();
-
         if (eventDateTime < currentDateTime) {
             alert("The event date and time cannot be in the past.");
             return;
@@ -116,6 +109,7 @@ export default function CreateEventScreen() {
             cost,
             details: details || "N/A",
             organizer: organizerName,
+            visibility: isInviteOnly ? "invite-only" : "public", // Use visibility instead of isInviteOnly
         };
 
         try {
@@ -137,7 +131,7 @@ export default function CreateEventScreen() {
             const data = await response.json();
             console.log("Event created successfully:", data);
 
-            alert(`Event Created:\n\nTitle: ${data.title}\nAddress: ${data.location}\nDate: ${data.date}\nTime: ${data.time}\nMax Participants: ${data.maxParticipants}\nCost: ${data.cost}\nDetails: ${data.details || "N/A"}\nOrganizer: ${organizerName}`);
+            alert(`Event Created:\n\nTitle: ${data.title}\nAddress: ${data.location}\nDate: ${data.date}\nTime: ${data.time}\nMax Participants: ${data.maxParticipants}\nCost: ${data.cost}\nDetails: ${data.details || "N/A"}\nOrganizer: ${organizerName}\nEvent Type: ${isInviteOnly ? "Invite-Only" : "Public"}`);
             router.back();
         } catch (error) {
             console.error("Error creating event:", error);
@@ -146,10 +140,7 @@ export default function CreateEventScreen() {
     };
 
     return (
-        <KeyboardAvoidingView
-            style={{ flex: 1 }}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        >
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
             <LinearGradient colors={['#4c669f', '#3b5998', '#192f5d']} style={styles.container}>
                 <ScrollView contentContainerStyle={styles.scrollContainer}>
                     <TouchableOpacity onPress={() => router.back()} style={styles.goBackButton}>
@@ -162,66 +153,30 @@ export default function CreateEventScreen() {
                     <Text style={styles.heading}>Create a New Event</Text>
 
                     <Text style={styles.label}>Event Title</Text>
-                    <TextInput
-                        placeholder="Enter event title"
-                        value={title}
-                        onChangeText={setTitle}
-                        style={styles.input}
-                    />
+                    <TextInput placeholder="Enter event title" value={title} onChangeText={setTitle} style={styles.input} />
 
                     <Text style={styles.label}>Address</Text>
-                    <TextInput
-                        placeholder="Enter address"
-                        value={location}
-                        onChangeText={setLocation}
-                        style={styles.input}
-                    />
+                    <TextInput placeholder="Enter address" value={location} onChangeText={setLocation} style={styles.input} />
 
                     <Text style={styles.label}>Date</Text>
-                    <TextInput
-                        placeholder="MM/DD/YYYY"
-                        value={date}
-                        onChangeText={formatDateInput}
-                        keyboardType="numeric"
-                        style={styles.input}
-                        maxLength={10}
-                    />
+                    <TextInput placeholder="MM/DD/YYYY" value={date} onChangeText={formatDateInput} keyboardType="numeric" style={styles.input} maxLength={10} />
 
                     <Text style={styles.label}>Time</Text>
-                    <TextInput
-                        placeholder="HH:MM"
-                        value={time}
-                        onChangeText={formatTimeInput}
-                        keyboardType="numeric"
-                        style={styles.input}
-                        maxLength={5}
-                    />
+                    <TextInput placeholder="HH:MM" value={time} onChangeText={formatTimeInput} keyboardType="numeric" style={styles.input} maxLength={5} />
 
                     <Text style={styles.label}>Max Participants</Text>
-                    <TextInput
-                        placeholder="Enter max participants"
-                        value={maxParticipants}
-                        onChangeText={setMaxParticipants}
-                        keyboardType="numeric"
-                        style={styles.input}
-                    />
+                    <TextInput placeholder="Enter max participants" value={maxParticipants} onChangeText={setMaxParticipants} keyboardType="numeric" style={styles.input} />
 
                     <Text style={styles.label}>Cost ($)</Text>
-                    <TextInput
-                        placeholder="Enter cost"
-                        value={cost}
-                        onChangeText={setCost}
-                        keyboardType="numeric"
-                        style={styles.input}
-                    />
+                    <TextInput placeholder="Enter cost" value={cost} onChangeText={setCost} keyboardType="numeric" style={styles.input} />
 
                     <Text style={styles.label}>Details (Optional)</Text>
-                    <TextInput
-                        placeholder="Enter additional details"
-                        value={details}
-                        onChangeText={setDetails}
-                        style={styles.input}
-                    />
+                    <TextInput placeholder="Enter additional details" value={details} onChangeText={setDetails} style={styles.input} />
+
+                    <View style={styles.switchContainer}>
+                        <Text style={styles.label}>Invite-Only</Text>
+                        <Switch value={isInviteOnly} onValueChange={setIsInviteOnly} />
+                    </View>
 
                     <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
                         <Text style={styles.submitButtonText}>Create Event</Text>
@@ -290,5 +245,15 @@ const styles = StyleSheet.create({
         fontWeight: "600",
         color: "#fff",
         marginLeft: 8, // Adds space between the icon and the text
+    },
+    switchContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginVertical: 10,
+        paddingHorizontal: 10,
+        backgroundColor: "#fff", // Light background for contrast
+        borderRadius: 10,
+        padding: 10,
     },
 });

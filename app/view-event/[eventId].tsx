@@ -222,7 +222,8 @@ export default function EventDetailsPage() {
                     <Text style={styles.details}>Organizer: {event.organizer ?? "Unknown"}</Text>
                     <Text style={styles.details}>Max Participants: {event.maxParticipants ?? "N/A"}</Text>
                     <Text style={styles.details}>Participants: {event.participants?.length ?? 0}</Text>
-                    <Text style={styles.details}>Cost: {event.cost ?? "Free"}</Text>
+                    <Text style={styles.details}>Cost: {event.cost === 0 ? "Free" : event.cost}</Text>
+                    <Text style={styles.details}>{event.visibility ?? "N/A"}</Text>
                 </View>
 
                 <TouchableOpacity
