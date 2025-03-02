@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Button, StyleSheet, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform } from "react-native";
+import { View, Text, TextInput, Button, StyleSheet, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Switch } from "react-native";
 import { useState, useEffect } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -18,6 +18,7 @@ export default function EditEventScreen() {
     const [details, setDetails] = useState("");
     const [organizer, setOrganizer] = useState<any>(null);
     const [currentParticipants, setCurrentParticipants] = useState(0);
+    const [inviteOnly, setInviteOnly] = useState(false); // Added state for Invite Only
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -46,6 +47,7 @@ export default function EditEventScreen() {
                     setMaxParticipants(data.maxParticipants.toString());
                     setDetails(data.details || "");
                     setCurrentParticipants(data.participants.length || 0);
+                    setInviteOnly(data.visibility === "invite-only"); // Set the toggle based on the event data
                     console.log("Fetched event data:", data);
                 }
             } catch (error) {
@@ -143,7 +145,10 @@ export default function EditEventScreen() {
             cost,
             details: details || "N/A",
             organizer: organizerName,
+            visibility: inviteOnly ? "invite-only" : "public", // Use visibility instead of isInviteOnly
         };
+
+        console.log("submitted", eventData);
 
         try {
             const response = await fetch(`http://10.0.0.9:5001/events/${eventId}`, {
@@ -160,7 +165,7 @@ export default function EditEventScreen() {
             }
 
             const data = await response.json();
-            alert(`Event Updated:\n\nTitle: ${data.title}\nAddress: ${data.location}\nDate: ${data.date}\nTime: ${data.time}\nMax Participants: ${data.maxParticipants}\nCost: ${data.cost}\nDetails: ${data.details || "N/A"}\nOrganizer: ${organizerName}`);
+            alert(`Event Updated:\n\nTitle: ${data.title}\nAddress: ${data.location}\nDate: ${data.date}\nTime: ${data.time}\nMax Participants: ${data.maxParticipants}\nCost: ${data.cost}\nDetails: ${data.details || "N/A"}\nOrganizer: ${organizerName}\n${data.visibility}`);
             router.back();
         } catch (error) {
             console.error("Error updating event:", error);
@@ -246,6 +251,15 @@ export default function EditEventScreen() {
                         style={styles.input}
                     />
 
+                    <View style={styles.switchContainer}>
+                        <Text style={styles.label}>Invite-Only</Text>
+                        <Switch
+                            value={inviteOnly}
+                            onValueChange={setInviteOnly}
+                            style={styles.switch}
+                        />
+                    </View>
+
                     <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
                         <Text style={styles.submitButtonText}>Update Event</Text>
                     </TouchableOpacity>
@@ -286,6 +300,22 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginBottom: 16,
         width: "100%",
+    },
+    switchContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginVertical: 10,
+        paddingHorizontal: 10,
+        backgroundColor: "#fff", // Light background for contrast
+        borderRadius: 10,
+        padding: 10,
+    },
+    switchText: {
+        fontSize: 16,
+    },
+    switch: {
+        transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }],
     },
     submitButton: {
         backgroundColor: "#ffa722",
