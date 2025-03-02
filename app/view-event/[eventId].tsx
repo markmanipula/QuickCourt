@@ -47,6 +47,7 @@ export default function EventDetailsPage() {
                 if (!response.ok) throw new Error('Failed to fetch event details');
 
                 const data = await response.json();
+                console.log("Event Details:", data);
                 setEvent(data);
 
                 if (data.participants && participant) {
@@ -78,28 +79,81 @@ export default function EventDetailsPage() {
     const handleJoinEvent = async () => {
         if (!eventId || !participant) return;
 
-        const participantName = `${participant.firstName} ${participant.lastName}`;
-        const eventData = {participant: participantName};
+        // If the event requires a passcode
+        if (event.passcode) {
+            // Prompt the user to enter the passcode
+            Alert.prompt(
+                'Enter Passcode',
+                'Please enter the passcode to join this event.',
+                [
+                    {
+                        text: 'Cancel',
+                        style: 'cancel',
+                    },
+                    {
+                        text: 'Join',
+                        onPress: async (passcodeInput) => {
+                            // Check if the passcode matches
+                            if (passcodeInput === event.passcode) {
+                                const participantName = `${participant.firstName} ${participant.lastName}`;
+                                const eventData = {
+                                    participant: participantName,
+                                    passcode: passcodeInput // Include passcode here
+                                };
 
-        setJoining(true);
+                                setJoining(true);
 
-        try {
-            const response = await fetch(`http://10.0.0.9:5001/events/${eventId}/join`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(eventData),
-            });
+                                try {
+                                    const response = await fetch(`http://10.0.0.9:5001/events/${eventId}/join`, {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify(eventData),
+                                    });
 
-            const responseData = await response.json();
-            if (!response.ok) throw new Error(responseData.error || 'Failed to join event');
+                                    const responseData = await response.json();
+                                    if (!response.ok) throw new Error(responseData.error || 'Failed to join event');
 
-            setEvent(responseData.event);
-            setIsParticipant(true);
-            alert(`Successfully joined event!`);
-        } catch (err: any) {
-            alert(`Failed to join event: ${err.message}`);
-        } finally {
-            setJoining(false);
+                                    setEvent(responseData.event);
+                                    setIsParticipant(true);
+                                    alert('Successfully joined event!');
+                                } catch (err: any) {
+                                    alert(`Failed to join event: ${err.message}`);
+                                } finally {
+                                    setJoining(false);
+                                }
+                            } else {
+                                alert('Incorrect passcode. Please try again.');
+                            }
+                        },
+                    },
+                ],
+                'plain-text'
+            );
+        } else {
+            // If there's no passcode, join the event directly
+            const participantName = `${participant.firstName} ${participant.lastName}`;
+            const eventData = { participant: participantName };
+
+            setJoining(true);
+
+            try {
+                const response = await fetch(`http://10.0.0.9:5001/events/${eventId}/join`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(eventData),
+                });
+
+                const responseData = await response.json();
+                if (!response.ok) throw new Error(responseData.error || 'Failed to join event');
+
+                setEvent(responseData.event);
+                setIsParticipant(true);
+                alert('Successfully joined event!');
+            } catch (err: any) {
+                alert(`Failed to join event: ${err.message}`);
+            } finally {
+                setJoining(false);
+            }
         }
     };
 
@@ -224,6 +278,12 @@ export default function EventDetailsPage() {
                     <Text style={styles.details}>Participants: {event.participants?.length ?? 0}</Text>
                     <Text style={styles.details}>Cost: {event.cost === 0 ? "Free" : event.cost}</Text>
                     <Text style={styles.details}>{event.visibility ?? "N/A"}</Text>
+                    {isOrganizer && event.passcode && (
+                        <View style={styles.passcodeContainer}>
+                            <Text style={styles.passcodeLabel}>Event Passcode:</Text>
+                            <Text style={styles.passcodeText}>{event.passcode}</Text>
+                        </View>
+                    )}
                 </View>
 
                 <TouchableOpacity
@@ -396,5 +456,24 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "bold",
         color: "#fff",
+    },
+    passcodeContainer: {
+        marginTop: 10,
+        padding: 10,
+        backgroundColor: "rgba(255, 255, 255, 0.2)",
+        borderRadius: 8,
+        alignItems: "center",
+    },
+
+    passcodeLabel: {
+        fontSize: 16,
+        fontWeight: "bold",
+        color: "#fff",
+    },
+
+    passcodeText: {
+        fontSize: 18,
+        fontWeight: "bold",
+        color: "#FFD700", // Gold color for visibility
     },
 });
