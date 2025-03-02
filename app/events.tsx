@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, ScrollView
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
-import {Ionicons} from "@expo/vector-icons";  // Import LinearGradient
+import { Ionicons } from "@expo/vector-icons";
 
 export default function EventsPage() {
     const router = useRouter();
@@ -18,7 +18,11 @@ export default function EventsPage() {
                     throw new Error('Failed to fetch events');
                 }
                 const data = await response.json();
-                setEvents(data);
+
+                // Filter out past events
+                const upcomingEvents = data.filter((event: { date: string | number | Date; }) => new Date(event.date) >= new Date());
+
+                setEvents(upcomingEvents);
             } catch (err) {
                 setError('Failed to fetch events');
                 console.error(err);
@@ -62,7 +66,7 @@ export default function EventsPage() {
                         <Text style={styles.goBackText}>Back</Text>
                     </View>
                 </TouchableOpacity>
-                <Text style={styles.header}>All Events</Text>
+                <Text style={styles.header}>Upcoming Events</Text>
                 {events.length > 0 ? (
                     events.map((event) => (
                         <TouchableOpacity
@@ -77,7 +81,7 @@ export default function EventsPage() {
                         </TouchableOpacity>
                     ))
                 ) : (
-                    <Text style={styles.noEventsText}>No events available.</Text>
+                    <Text style={styles.noEventsText}>No upcoming events available.</Text>
                 )}
             </ScrollView>
         </LinearGradient>
@@ -92,14 +96,14 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        backgroundColor: "transparent", // Make sure the gradient is visible behind content
+        backgroundColor: "transparent",
     },
     header: {
         fontSize: 24,
         fontWeight: "bold",
         textAlign: "center",
         marginBottom: 20,
-        color: "#fff", // Text color to make it readable on the gradient
+        color: "#fff",
     },
     eventCard: {
         padding: 15,
@@ -135,7 +139,7 @@ const styles = StyleSheet.create({
         textAlign: "center",
         fontSize: 18,
         marginTop: 20,
-        color: "#fff", // Make this text readable on the gradient
+        color: "#fff",
     },
     errorText: {
         color: "red",
@@ -154,18 +158,18 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
     goBackButton: {
-        flexDirection: "row", // Aligns the icon and text in a row
-        alignItems: "center", // Centers them vertically
+        flexDirection: "row",
+        alignItems: "center",
         marginBottom: 16,
     },
     backButtonContent: {
-        flexDirection: "row", // Makes sure icon and text are in the same row
+        flexDirection: "row",
         alignItems: "center",
     },
     goBackText: {
         fontSize: 18,
         fontWeight: "600",
         color: "#fff",
-        marginLeft: 8, // Adds space between the icon and the text
+        marginLeft: 8,
     },
 });
