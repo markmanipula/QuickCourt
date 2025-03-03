@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from "@expo/vector-icons";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/firebaseConfig"; // Ensure the correct path
 
 interface IParticipant {
     name: string;
@@ -15,6 +17,8 @@ export default function ParticipantsPage() {
     const [participants, setParticipants] = useState<IParticipant[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [isOrganizer, setIsOrganizer] = useState(false);
+    const [organizerName, setOrganizerName] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchParticipants = async () => {
@@ -31,6 +35,7 @@ export default function ParticipantsPage() {
                 }
                 const data = await response.json();
                 setParticipants(data.participants);
+                setOrganizerName(data.organizer); // Assuming the response contains the organizer name
             } catch (err) {
                 console.error("Error fetching participants:", err);
                 setError("Failed to fetch participants.");
@@ -41,6 +46,25 @@ export default function ParticipantsPage() {
 
         fetchParticipants();
     }, [eventId]);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const fullName = user.displayName || "User";
+                const nameParts = fullName.split(" ");
+                const firstName = nameParts[0];
+                const lastName = nameParts.length > 1 ? nameParts.slice(1).join(" ") : "";
+                const participantName = `${firstName} ${lastName}`;
+
+                // Check if the current user is the organizer
+                if (organizerName && participantName === organizerName) {
+                    setIsOrganizer(true);
+                }
+            }
+        });
+
+        return () => unsubscribe();
+    }, [organizerName]);
 
     const togglePaidStatus = async (participant: IParticipant) => {
         try {
@@ -103,7 +127,7 @@ export default function ParticipantsPage() {
                         <TouchableOpacity
                             key={index}
                             style={[styles.participantCard, participant.paid && styles.paidBackground]}
-                            onPress={() => togglePaidStatus(participant)}
+                            onPress={() => isOrganizer && togglePaidStatus(participant)} // Only allow organized to toggle
                         >
                             <Text style={styles.participantName}>{participant.name}</Text>
                             <Text style={styles.paymentStatus}>
