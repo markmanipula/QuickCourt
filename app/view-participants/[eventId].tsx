@@ -4,10 +4,15 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from "@expo/vector-icons";
 
+interface IParticipant {
+    name: string;
+    paid: boolean;
+}
+
 export default function ParticipantsPage() {
     const { eventId } = useLocalSearchParams();
     const router = useRouter();
-    const [participants, setParticipants] = useState<string[]>([]);
+    const [participants, setParticipants] = useState<IParticipant[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -25,7 +30,7 @@ export default function ParticipantsPage() {
                     throw new Error("Failed to fetch participants");
                 }
                 const data = await response.json();
-                setParticipants(data.participants.map((p: { name: string }) => p.name));
+                setParticipants(data.participants);
             } catch (err) {
                 console.error("Error fetching participants:", err);
                 setError("Failed to fetch participants.");
@@ -36,6 +41,27 @@ export default function ParticipantsPage() {
 
         fetchParticipants();
     }, [eventId]);
+
+    const togglePaidStatus = async (participant: IParticipant) => {
+        try {
+            const updatedParticipants = participants.map(p =>
+                p.name === participant.name ? { ...p, paid: !p.paid } : p
+            );
+            setParticipants(updatedParticipants); // Optimistic UI update
+
+            const response = await fetch(`http://10.0.0.9:5001/events/${eventId}/participants/${participant.name}/toggle-paid`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to update paid status");
+            }
+        } catch (error) {
+            console.error("Error updating paid status:", error);
+            setError("Could not update participant status.");
+        }
+    };
 
     if (loading) {
         return (
@@ -62,7 +88,6 @@ export default function ParticipantsPage() {
 
     return (
         <LinearGradient colors={['#4c669f', '#3b5998', '#192f5d']} style={styles.gradientContainer}>
-            {/* Back button outside the ScrollView */}
             <TouchableOpacity onPress={() => router.back()} style={styles.goBackButton}>
                 <View style={styles.backButtonContent}>
                     <Ionicons name="arrow-back" size={24} color="#fff" />
@@ -70,15 +95,21 @@ export default function ParticipantsPage() {
                 </View>
             </TouchableOpacity>
 
-            {/* ScrollView for the content */}
             <ScrollView contentContainerStyle={styles.container}>
                 <Text style={styles.header}>Participants</Text>
 
                 {participants.length > 0 ? (
                     participants.map((participant, index) => (
-                        <View key={index} style={styles.participantCard}>
-                            <Text style={styles.participantName}>{participant}</Text>
-                        </View>
+                        <TouchableOpacity
+                            key={index}
+                            style={[styles.participantCard, participant.paid && styles.paidBackground]}
+                            onPress={() => togglePaidStatus(participant)}
+                        >
+                            <Text style={styles.participantName}>{participant.name}</Text>
+                            <Text style={styles.paymentStatus}>
+                                {participant.paid ? "Paid ✅" : "Not Paid ❌"}
+                            </Text>
+                        </TouchableOpacity>
                     ))
                 ) : (
                     <Text style={styles.noParticipants}>No participants yet.</Text>
@@ -91,7 +122,7 @@ export default function ParticipantsPage() {
 const styles = StyleSheet.create({
     gradientContainer: {
         flex: 1,
-        paddingTop: 60, // Padding top to ensure the back button doesn't overlap content
+        paddingTop: 60,
     },
     container: {
         flexGrow: 1,
@@ -116,10 +147,19 @@ const styles = StyleSheet.create({
         shadowRadius: 3,
         elevation: 2,
     },
+    paidBackground: {
+        backgroundColor: 'rgba(0, 255, 0, 0.3)', // Greenish background for paid users
+    },
     participantName: {
         fontSize: 18,
         fontWeight: '500',
         color: '#fff',
+    },
+    paymentStatus: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#fff',
+        marginTop: 5,
     },
     noParticipants: {
         fontSize: 16,
@@ -128,23 +168,23 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     goBackButton: {
-        position: 'absolute', // Absolute positioning
-        top: 20, // Top of the screen
-        left: 20, // Left of the screen
-        flexDirection: "row", // Aligns the icon and text in a row
-        alignItems: "center", // Centers them vertically
+        position: 'absolute',
+        top: 20,
+        left: 20,
+        flexDirection: "row",
+        alignItems: "center",
         marginBottom: 16,
-        zIndex: 1, // Ensures the button stays on top of other elements
+        zIndex: 1,
     },
     backButtonContent: {
-        flexDirection: "row", // Ensures icon and text are in the same row
+        flexDirection: "row",
         alignItems: "center",
     },
     goBackText: {
         fontSize: 18,
         fontWeight: "600",
         color: "#fff",
-        marginLeft: 8, // Adds space between the icon and the text
+        marginLeft: 8,
     },
     errorText: {
         fontSize: 16,
