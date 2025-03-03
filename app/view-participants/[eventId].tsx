@@ -25,7 +25,7 @@ export default function ParticipantsPage() {
                     throw new Error("Failed to fetch participants");
                 }
                 const data = await response.json();
-                setParticipants(data.participants);
+                setParticipants(data.participants.map((p: { name: string }) => p.name));
             } catch (err) {
                 console.error("Error fetching participants:", err);
                 setError("Failed to fetch participants.");

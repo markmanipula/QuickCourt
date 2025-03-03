@@ -35,13 +35,9 @@ export default function EventDetailsPage() {
     }, []);
 
     useEffect(() => {
-        const fetchEventDetails = async () => {
-            if (!eventId) {
-                setError("Event ID not provided.");
-                setLoading(false);
-                return;
-            }
+        if (!eventId || !participant) return; // Ensure participant is available before fetching
 
+        const fetchEventDetails = async () => {
             try {
                 const response = await fetch(`http://10.0.0.9:5001/events/${eventId}`);
                 if (!response.ok) throw new Error('Failed to fetch event details');
@@ -50,15 +46,10 @@ export default function EventDetailsPage() {
                 console.log("Event Details:", data);
                 setEvent(data);
 
-                if (data.participants && participant) {
-                    const participantName = `${participant.firstName} ${participant.lastName}`;
-                    setIsParticipant(data.participants.includes(participantName));
-                }
+                const participantName = `${participant.firstName} ${participant.lastName}`;
 
-                if (participant) {
-                    const participantName = `${participant.firstName} ${participant.lastName}`;
-                    setIsOrganizer(data.organizer === participantName);
-                }
+                // Ensure isParticipant state is correctly set
+                setIsParticipant(data.participants?.some((p: { name: string }) => p.name === participantName) || false);                setIsOrganizer(data.organizer === participantName);
             } catch (err) {
                 setError('Failed to fetch event details');
                 console.error(err);
@@ -68,7 +59,7 @@ export default function EventDetailsPage() {
         };
 
         fetchEventDetails();
-    }, [eventId, participant]);
+    }, [eventId, participant]); // Ensure this runs after participant is set
 
     useEffect(() => {
         if (error) {
