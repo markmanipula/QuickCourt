@@ -1,13 +1,13 @@
-import {View, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity, Alert} from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/firebaseConfig"; // Ensure the correct path
 import { LinearGradient } from 'expo-linear-gradient';
-import {Ionicons} from "@expo/vector-icons"; // Importing gradient component
+import { Ionicons } from "@expo/vector-icons"; // Importing gradient component
 
 export default function EventDetailsPage() {
-    const {eventId} = useLocalSearchParams();
+    const { eventId } = useLocalSearchParams();
     const [event, setEvent] = useState<any | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -17,6 +17,7 @@ export default function EventDetailsPage() {
     const [participant, setParticipant] = useState<any>(null);
     const [isParticipant, setIsParticipant] = useState(false);
     const [isOrganizer, setIsOrganizer] = useState(false);
+    const [onWaitlist, setOnWaitlist] = useState(false);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -25,7 +26,7 @@ export default function EventDetailsPage() {
                 const nameParts = fullName.split(" ");
                 const firstName = nameParts[0];
                 const lastName = nameParts.length > 1 ? nameParts.slice(1).join(" ") : "";
-                setParticipant({firstName, lastName});
+                setParticipant({ firstName, lastName });
             } else {
                 setParticipant(null);
             }
@@ -48,8 +49,10 @@ export default function EventDetailsPage() {
 
                 const participantName = `${participant.firstName} ${participant.lastName}`;
 
-                // Ensure isParticipant state is correctly set
-                setIsParticipant(data.participants?.some((p: { name: string }) => p.name === participantName) || false);                setIsOrganizer(data.organizer === participantName);
+                // Ensure state variables are correctly set
+                setIsParticipant(data.participants?.some((p: { name: string }) => p.name === participantName) || false);
+                setOnWaitlist(data.waitlist?.some((w: { name: string }) => w.name === participantName) || false);
+                setIsOrganizer(data.organizer === participantName);
             } catch (err) {
                 setError('Failed to fetch event details');
                 console.error(err);
@@ -148,6 +151,130 @@ export default function EventDetailsPage() {
         }
     };
 
+    const handleJoinWaitlist = async () => {
+        if (!eventId || !participant) return;
+
+        const participantName = `${participant.firstName} ${participant.lastName}`;
+
+        // If the event requires a passcode for the waitlist
+        if (event.passcode) {
+            // Prompt the user to enter the passcode
+            Alert.prompt(
+                'Enter Passcode',
+                'This event is invite-only. Please enter the passcode to join the waitlist.',
+                [
+                    {
+                        text: 'Cancel',
+                        style: 'cancel',
+                    },
+                    {
+                        text: 'Join Waitlist',
+                        onPress: async (passcodeInput) => {
+                            // Check if the provided passcode matches the event's passcode
+                            if (passcodeInput === event.passcode) {
+                                const eventData = {
+                                    participant: participantName,
+                                    passcode: passcodeInput // Include passcode here
+                                };
+
+                                setJoining(true);
+
+                                try {
+                                    const response = await fetch(`http://10.0.0.9:5001/events/${eventId}/join`, {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify(eventData),
+                                    });
+
+                                    const responseData = await response.json();
+                                    if (!response.ok) throw new Error(responseData.error || 'Failed to join waitlist');
+
+                                    setEvent(responseData.event);
+                                    setOnWaitlist(true);
+                                    alert('Successfully joined the waitlist!');
+                                } catch (err: any) {
+                                    alert(`Failed to join waitlist: ${err.message}`);
+                                } finally {
+                                    setJoining(false);
+                                }
+                            } else {
+                                alert('Incorrect passcode. Please try again.');
+                            }
+                        },
+                    },
+                ],
+                'plain-text' // You can use 'plain-text' to allow for text input
+            );
+        } else {
+            // If there's no invite-only restriction, join the waitlist directly
+            const eventData = { participant: participantName };
+
+            setJoining(true);
+
+            try {
+                const response = await fetch(`http://10.0.0.9:5001/events/${eventId}/join`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(eventData),
+                });
+
+                const responseData = await response.json();
+                if (!response.ok) throw new Error(responseData.error || 'Failed to join waitlist');
+
+                setEvent(responseData.event);
+                setOnWaitlist(true);
+                alert('Successfully joined the waitlist!');
+            } catch (err: any) {
+                alert(`Failed to join waitlist: ${err.message}`);
+            } finally {
+                setJoining(false);
+            }
+        }
+    };
+
+    const handleLeaveWaitlist = async () => {
+        if (!eventId || !participant) return;
+
+        Alert.alert(
+            "Leave Waitlist",
+            "Are you sure you want to leave this waitlist?",
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel"
+                },
+                {
+                    text: "Leave",
+                    onPress: async () => {
+                        const participantName = `${participant.firstName} ${participant.lastName}`;
+                        const eventData = { participant: participantName };
+
+                        setLeaving(true);
+
+                        try {
+                            const response = await fetch(`http://10.0.0.9:5001/events/${eventId}/leave`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(eventData),
+                            });
+
+                            const responseData = await response.json();
+                            if (!response.ok) throw new Error(responseData.error || 'Failed to leave waitlist');
+
+                            setEvent(responseData.event);
+                            setOnWaitlist(false);
+                            alert("Successfully left waitlist!");
+                        } catch (err: any) {
+                            alert(`Failed to leave waitlist: ${err.message}`);
+                        } finally {
+                            setLeaving(false);
+                        }
+                    }
+                }
+            ]
+        );
+    };
+
     const handleLeaveEvent = async () => {
         if (!eventId || !participant) return;
 
@@ -235,7 +362,7 @@ export default function EventDetailsPage() {
     if (loading) {
         return (
             <View style={styles.container}>
-                <ActivityIndicator size="large" color="#0000ff"/>
+                <ActivityIndicator size="large" color="#0000ff" />
             </View>
         );
     }
@@ -253,7 +380,7 @@ export default function EventDetailsPage() {
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.goBackButton}>
                     <View style={styles.backButtonContent}>
-                        <Ionicons name="arrow-back" size={24} color="#fff"/>
+                        <Ionicons name="arrow-back" size={24} color="#fff" />
                         <Text style={styles.goBackText}>Back</Text>
                     </View>
                 </TouchableOpacity>
@@ -292,7 +419,7 @@ export default function EventDetailsPage() {
                     </TouchableOpacity>
                 )}
 
-                {isParticipant && (
+                {isParticipant ? (
                     <TouchableOpacity
                         style={styles.leaveButton}
                         onPress={handleLeaveEvent}
@@ -302,9 +429,27 @@ export default function EventDetailsPage() {
                             {leaving ? "Leaving..." : "Leave Event"}
                         </Text>
                     </TouchableOpacity>
-                )}
-
-                {!isParticipant ? (
+                ) : onWaitlist ? (
+                    <TouchableOpacity
+                        style={styles.leaveButton}
+                        onPress={handleLeaveWaitlist}
+                        disabled={leaving}
+                    >
+                        <Text style={styles.leaveButtonText}>
+                            {leaving ? "Leaving Waitlist..." : "Leave Waitlist"}
+                        </Text>
+                    </TouchableOpacity>
+                ) : event.participants.length >= event.maxParticipants ? (
+                    <TouchableOpacity
+                        style={styles.joinButton}
+                        onPress={handleJoinWaitlist}
+                        disabled={joining || !participant}
+                    >
+                        <Text style={styles.joinButtonText}>
+                            {joining ? "Joining Waitlist..." : "Join Waitlist"}
+                        </Text>
+                    </TouchableOpacity>
+                ) : (
                     <TouchableOpacity
                         style={styles.joinButton}
                         onPress={handleJoinEvent}
@@ -314,11 +459,9 @@ export default function EventDetailsPage() {
                             {joining ? "Joining..." : "Join Event"}
                         </Text>
                     </TouchableOpacity>
-                ) : null}
-
+                )}
             </ScrollView>
 
-            {/* Wrapping the Delete button in a container that pushes it to the bottom */}
             <View style={styles.buttonsWrapper}>
                 {isOrganizer && (
                     <TouchableOpacity
@@ -331,7 +474,6 @@ export default function EventDetailsPage() {
             </View>
         </LinearGradient>
     );
-
 }
 
 // Container now has flex: 1 to take up full height
