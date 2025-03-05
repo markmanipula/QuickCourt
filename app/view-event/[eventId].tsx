@@ -259,14 +259,14 @@ export default function EventDetailsPage() {
                 </TouchableOpacity>
                 <View style={styles.eventHeader}>
                     <Text style={styles.header}>{event.title ?? "No Title"}</Text>
-                    <Text style={styles.details}>Location: {event.location ?? "Unknown"}</Text>
+                    <Text style={styles.locationStyle}>Location: {event.location ?? "Unknown"}</Text>
                     <Text style={styles.details}>Date: {event.date ? new Date(event.date).toLocaleDateString() : "TBA"}</Text>
                     <Text style={styles.details}>Time: {event.time ?? "TBA"}</Text>
-                    <Text style={styles.details}>Description: {event.details ?? "No details available"}</Text>
                     <Text style={styles.details}>Organizer: {event.organizer ?? "Unknown"}</Text>
                     <Text style={styles.details}>Max Participants: {event.maxParticipants ?? "N/A"}</Text>
-                    <Text style={styles.details}>Participants: {event.participants?.length ?? 0}</Text>
+                    <Text style={styles.details}>Current Participants: {event.participants?.length ?? 0}</Text>
                     <Text style={styles.details}>Cost: {event.cost === 0 ? "Free" : event.cost}</Text>
+                    <Text style={styles.details}>Description: {event.details ?? "No details available"}</Text>
                     <Text style={styles.details}>{event.visibility ?? "N/A"}</Text>
                     {isOrganizer && event.passcode && (
                         <View style={styles.passcodeContainer}>
@@ -356,6 +356,12 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         color: '#fff',
+    },
+    locationStyle: {
+        fontSize: 16,
+        color: '#e0e7ff',
+        marginTop: 5,
+        marginBottom: 10,
     },
     details: {
         fontSize: 16,
