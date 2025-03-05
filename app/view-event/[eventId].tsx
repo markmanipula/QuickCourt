@@ -260,8 +260,7 @@ export default function EventDetailsPage() {
                 <View style={styles.eventHeader}>
                     <Text style={styles.header}>{event.title ?? "No Title"}</Text>
                     <Text style={styles.details}>Location: {event.location ?? "Unknown"}</Text>
-                    <Text
-                        style={styles.details}>Date: {event.date ? new Date(event.date).toLocaleDateString() : "TBA"}</Text>
+                    <Text style={styles.details}>Date: {event.date ? new Date(event.date).toLocaleDateString() : "TBA"}</Text>
                     <Text style={styles.details}>Time: {event.time ?? "TBA"}</Text>
                     <Text style={styles.details}>Description: {event.details ?? "No details available"}</Text>
                     <Text style={styles.details}>Organizer: {event.organizer ?? "Unknown"}</Text>

@@ -75,9 +75,9 @@ export default function EventsPage() {
                             onPress={() => handleEventClick(event._id)}
                         >
                             <Text style={styles.eventTitle}>{event.title || "No Title"}</Text>
-                            <Text style={styles.eventLocation}>{event.location || "No Location"}</Text>
-                            <Text style={styles.eventOrganizer}>{event.organizer || "No Organizer"}</Text>
-                            <Text style={styles.eventDate}>{event.date ? new Date(event.date).toLocaleDateString() : "No Date"}</Text>
+                            <Text style={styles.eventOrganizer}>Organizer: {event.organizer || "No Organizer"}</Text>
+                            <Text style={styles.eventDate}>Date: {event.date ? new Date(event.date).toLocaleDateString() : "No Date"}</Text>
+                            <Text style={styles.eventType}>{event.visibility ?? "N/A"}</Text>
                         </TouchableOpacity>
                     ))
                 ) : (
@@ -132,6 +132,11 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
     eventDate: {
+        fontSize: 14,
+        color: "#e0e7ff",
+        marginBottom: 5,
+    },
+    eventType: {
         fontSize: 14,
         color: "#e0e7ff",
     },
