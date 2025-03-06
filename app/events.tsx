@@ -3,12 +3,32 @@ import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
+import { auth } from "@/firebaseConfig";
+import { onAuthStateChanged } from "firebase/auth";
 
 export default function EventsPage() {
     const router = useRouter();
     const [events, setEvents] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [user, setUser] = useState<{ firstName: string; lastName: string } | null>(null);
+    const [filter, setFilter] = useState<"All" | "Organized" | "Participating" | "Waitlist">("All");
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const fullName = user.displayName || "User";
+                const nameParts = fullName.split(" ");
+                const firstName = nameParts[0];
+                const lastName = nameParts.length > 1 ? nameParts.slice(1).join(" ") : "";
+                setUser({ firstName, lastName });
+            } else {
+                router.replace("/login");
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -20,7 +40,7 @@ export default function EventsPage() {
                 const data = await response.json();
 
                 // Filter out past events
-                const upcomingEvents = data.filter((event: { date: string | number | Date; }) => new Date(event.date) >= new Date());
+                const upcomingEvents = data.filter((event: { date: string }) => new Date(event.date) >= new Date());
 
                 setEvents(upcomingEvents);
             } catch (err) {
@@ -37,6 +57,22 @@ export default function EventsPage() {
     const handleEventClick = (eventId: string) => {
         router.push(`/view-event/${eventId}`);
     };
+
+    const filteredEvents = events.filter((event) => {
+        if (!user) return false; // Ensure user is defined before filtering
+
+        switch (filter) {
+            case "Organized":
+                return event.organizer === `${user.firstName} ${user.lastName}`;
+            case "Participating":
+                return event.participants?.includes(`${user.firstName} ${user.lastName}`);
+            case "Waitlist":
+                return event.waitlist?.includes(`${user.firstName} ${user.lastName}`);
+            case "All":
+            default:
+                return true;
+        }
+    });
 
     if (loading) {
         return (
@@ -66,9 +102,24 @@ export default function EventsPage() {
                         <Text style={styles.goBackText}>Back</Text>
                     </View>
                 </TouchableOpacity>
+
                 <Text style={styles.header}>Upcoming Events</Text>
-                {events.length > 0 ? (
-                    events.map((event) => (
+
+                {/* Toggle Filter Buttons */}
+                <View style={styles.filterContainer}>
+                    {["All", "Organized", "Participating", "Waitlist"].map((option) => (
+                        <TouchableOpacity
+                            key={option}
+                            style={[styles.filterButton, filter === option && styles.activeFilter]}
+                            onPress={() => setFilter(option as any)}
+                        >
+                            <Text style={styles.filterText}>{option}</Text>
+                        </TouchableOpacity>
+                    ))}
+                </View>
+
+                {filteredEvents.length > 0 ? (
+                    filteredEvents.map((event) => (
                         <TouchableOpacity
                             key={event._id}
                             style={styles.eventCard}
@@ -81,7 +132,7 @@ export default function EventsPage() {
                         </TouchableOpacity>
                     ))
                 ) : (
-                    <Text style={styles.noEventsText}>No upcoming events available.</Text>
+                    <Text style={styles.noEventsText}>No events found for selected filter.</Text>
                 )}
             </ScrollView>
         </LinearGradient>
@@ -105,6 +156,26 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         color: "#fff",
     },
+    filterContainer: {
+        flexDirection: "row",
+        justifyContent: "center",
+        marginBottom: 20,
+    },
+    filterButton: {
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+        borderRadius: 20,
+        marginHorizontal: 5,
+        backgroundColor: "#1e3a8a",
+    },
+    activeFilter: {
+        backgroundColor: "#3b82f6",
+    },
+    filterText: {
+        color: "#fff",
+        fontSize: 14,
+        fontWeight: "bold",
+    },
     eventCard: {
         padding: 15,
         marginBottom: 10,
@@ -119,11 +190,6 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: "#e0e7ff",
         fontWeight: "600",
-        marginBottom: 5,
-    },
-    eventLocation: {
-        fontSize: 14,
-        color: "#e0e7ff",
         marginBottom: 5,
     },
     eventOrganizer: {
