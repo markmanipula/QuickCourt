@@ -326,6 +326,10 @@ export default function EventDetailsPage() {
         router.push(`/view-participants/${eventId}`);
     };
 
+    const handleViewWaitlist = () => {
+        router.push(`/view-waitlist/${eventId}`); // Assuming a route for viewing waitlist exists
+    };
+
     const handleDeleteEvent = async () => {
         if (!eventId) return;
 
@@ -408,6 +412,13 @@ export default function EventDetailsPage() {
                     onPress={handleViewParticipants}
                 >
                     <Text style={styles.viewParticipantsButtonText}>See Current Participants</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={styles.viewParticipantsButton}
+                    onPress={handleViewWaitlist}
+                >
+                    <Text style={styles.viewParticipantsButtonText}>See Current Waitlist</Text>
                 </TouchableOpacity>
 
                 {isOrganizer && (
