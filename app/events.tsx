@@ -15,6 +15,10 @@ export default function EventsPage() {
     const [filter, setFilter] = useState<"All" | "Organized" | "Participating" | "Waitlist">("All");
 
     useEffect(() => {
+        console.log("Fetched Events:", events);
+    }, [events]);
+
+    useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
                 const fullName = user.displayName || "User";
@@ -59,15 +63,19 @@ export default function EventsPage() {
     };
 
     const filteredEvents = events.filter((event) => {
-        if (!user) return false; // Ensure user is defined before filtering
+        if (!user) return false;
 
         switch (filter) {
             case "Organized":
                 return event.organizer === `${user.firstName} ${user.lastName}`;
             case "Participating":
-                return event.participants?.includes(`${user.firstName} ${user.lastName}`);
+                return event.participants?.some((participant: { name: string }) =>
+                    participant.name === `${user.firstName} ${user.lastName}`
+                );
             case "Waitlist":
-                return event.waitlist?.includes(`${user.firstName} ${user.lastName}`);
+                return event.waitlist?.some((waitlisted: { name: string }) =>
+                    waitlisted.name === `${user.firstName} ${user.lastName}`
+                );
             case "All":
             default:
                 return true;
