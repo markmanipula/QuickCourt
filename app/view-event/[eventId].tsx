@@ -327,7 +327,7 @@ export default function EventDetailsPage() {
     };
 
     const handleViewWaitlist = () => {
-        router.push(`/view-waitlist/${eventId}`); // Assuming a route for viewing waitlist exists
+        router.push(`/view-waitlist/${eventId}`);
     };
 
     const handleDeleteEvent = async () => {
