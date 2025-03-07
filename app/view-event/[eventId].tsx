@@ -156,59 +156,7 @@ export default function EventDetailsPage() {
 
         const participantName = `${participant.firstName} ${participant.lastName}`;
 
-        // If the event requires a passcode for the waitlist
-        if (event.passcode) {
-            // Prompt the user to enter the passcode
-            Alert.prompt(
-                'Enter Passcode',
-                'This event is invite-only. Please enter the passcode to join the waitlist.',
-                [
-                    {
-                        text: 'Cancel',
-                        style: 'cancel',
-                    },
-                    {
-                        text: 'Join Waitlist',
-                        onPress: async (passcodeInput) => {
-                            // Check if the provided passcode matches the event's passcode
-                            if (passcodeInput === event.passcode) {
-                                const eventData = {
-                                    participant: participantName,
-                                    passcode: passcodeInput // Include passcode here
-                                };
-
-                                setJoining(true);
-
-                                try {
-                                    const response = await fetch(`http://10.0.0.9:5001/events/${eventId}/join`, {
-                                        method: 'POST',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify(eventData),
-                                    });
-
-                                    const responseData = await response.json();
-                                    if (!response.ok) throw new Error(responseData.error || 'Failed to join waitlist');
-
-                                    setEvent(responseData.event);
-                                    setOnWaitlist(true);
-                                    alert('Successfully joined the waitlist!');
-                                } catch (err: any) {
-                                    alert(`Failed to join waitlist: ${err.message}`);
-                                } finally {
-                                    setJoining(false);
-                                }
-                            } else {
-                                alert('Incorrect passcode. Please try again.');
-                            }
-                        },
-                    },
-                ],
-                'plain-text' // You can use 'plain-text' to allow for text input
-            );
-        } else {
-            // If there's no invite-only restriction, join the waitlist directly
-            const eventData = { participant: participantName };
-
+        const joinWaitlist = async (eventData: any) => {
             setJoining(true);
 
             try {
@@ -223,12 +171,44 @@ export default function EventDetailsPage() {
 
                 setEvent(responseData.event);
                 setOnWaitlist(true);
-                alert('Successfully joined the waitlist!');
+
+                // Find the waitlist position
+                const waitlistPosition = responseData.event.waitlist.findIndex(
+                    (p: any) => p.name === participantName
+                ) + 1;
+
+                alert(`Successfully joined the waitlist! You are #${waitlistPosition} on the waitlist.`);
             } catch (err: any) {
                 alert(`Failed to join waitlist: ${err.message}`);
             } finally {
                 setJoining(false);
             }
+        };
+
+        if (event.passcode) {
+            Alert.prompt(
+                'Enter Passcode',
+                'This event is invite-only. Please enter the passcode to join the waitlist.',
+                [
+                    {
+                        text: 'Cancel',
+                        style: 'cancel',
+                    },
+                    {
+                        text: 'Join Waitlist',
+                        onPress: async (passcodeInput) => {
+                            if (passcodeInput === event.passcode) {
+                                await joinWaitlist({ participant: participantName, passcode: passcodeInput });
+                            } else {
+                                alert('Incorrect passcode. Please try again.');
+                            }
+                        },
+                    },
+                ],
+                'plain-text'
+            );
+        } else {
+            await joinWaitlist({ participant: participantName });
         }
     };
 
