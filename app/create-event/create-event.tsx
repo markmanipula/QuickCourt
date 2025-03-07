@@ -131,8 +131,8 @@ export default function CreateEventScreen() {
             const data = await response.json();
             console.log("Event created successfully:", data);
 
-            alert(`Event Created:\n\nTitle: ${data.title}\nAddress: ${data.location}\nDate: ${data.date}\nTime: ${data.time}\nMax Participants: ${data.maxParticipants}\nCost: ${data.cost}\nDetails: ${data.details || "N/A"}\nOrganizer: ${organizerName}\nEvent Type: ${isInviteOnly ? "Invite-Only" : "Public"}`);
-            router.back();
+            alert("Successfully created event!");
+            router.push(`/view-event/${data._id}`);
         } catch (error) {
             console.error("Error creating event:", error);
             alert("Error creating event. Please try again.");
