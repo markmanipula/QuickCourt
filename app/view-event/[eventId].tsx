@@ -4,7 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/firebaseConfig"; // Ensure the correct path
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from "@expo/vector-icons"; // Importing gradient component
+import { Ionicons } from "@expo/vector-icons";
+import EventCard from "@/app/EventCard"; // Importing gradient component
 
 export default function EventDetailsPage() {
     const { eventId } = useLocalSearchParams();
@@ -368,24 +369,19 @@ export default function EventDetailsPage() {
                         <Text style={styles.goBackText}>Back</Text>
                     </View>
                 </TouchableOpacity>
-                <View style={styles.eventHeader}>
-                    <Text style={styles.header}>{event.title ?? "No Title"}</Text>
-                    <Text style={styles.locationStyle}>Location: {event.location ?? "Unknown"}</Text>
-                    <Text style={styles.details}>Date: {event.date ? new Date(event.date).toLocaleDateString() : "TBA"}</Text>
-                    <Text style={styles.details}>Time: {event.time ?? "TBA"}</Text>
-                    <Text style={styles.details}>Organizer: {event.organizer ?? "Unknown"}</Text>
-                    <Text style={styles.details}>Max Participants: {event.maxParticipants ?? "N/A"}</Text>
-                    <Text style={styles.details}>Current Participants: {event.participants?.length ?? 0}</Text>
-                    <Text style={styles.details}>Cost: {event.cost === 0 ? "Free" : event.cost}</Text>
-                    <Text style={styles.details}>Description: {event.details ?? "No details available"}</Text>
-                    <Text style={styles.details}>{event.visibility ?? "N/A"}</Text>
-                    {isOrganizer && event.passcode && (
-                        <View style={styles.passcodeContainer}>
-                            <Text style={styles.passcodeLabel}>Event Passcode:</Text>
-                            <Text style={styles.passcodeText}>{event.passcode}</Text>
-                        </View>
-                    )}
-                </View>
+
+                <EventCard
+                    title={event.title ?? "No Title"}
+                    price={event.cost === 0 ? "Free" : event.cost.toString()}
+                    inviteOnly={event.visibility === "Invite Only"}
+                    date={event.date ? new Date(event.date).toLocaleDateString() : "TBA"}
+                    time={event.time ?? "TBA"}
+                    location={event.location ?? "Unknown"}
+                    participants={`${event.participants?.length ?? 0}/${event.maxParticipants ?? "N/A"}`}
+                    organizer={event.organizer ?? "Unknown"}
+                    details={event.details ?? "No details"}
+                    passcode={isOrganizer && event.passcode ? event.passcode : null}
+                />
 
                 <TouchableOpacity
                     style={styles.viewParticipantsButton}
@@ -585,24 +581,5 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "bold",
         color: "#fff",
-    },
-    passcodeContainer: {
-        marginTop: 10,
-        padding: 10,
-        backgroundColor: "rgba(255, 255, 255, 0.2)",
-        borderRadius: 8,
-        alignItems: "center",
-    },
-
-    passcodeLabel: {
-        fontSize: 16,
-        fontWeight: "bold",
-        color: "#fff",
-    },
-
-    passcodeText: {
-        fontSize: 18,
-        fontWeight: "bold",
-        color: "#FFD700", // Gold color for visibility
-    },
+    }
 });
