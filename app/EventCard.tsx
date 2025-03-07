@@ -45,9 +45,13 @@ const EventCard: React.FC<EventCardProps> = ({
                 <View style={styles.tag}>
                     <Text style={styles.tagText}>${price}</Text>
                 </View>
-                {inviteOnly && (
+                {inviteOnly ? (
                     <View style={[styles.tag, styles.inviteOnly]}>
                         <Text style={styles.tagText}>Invite Only</Text>
+                    </View>
+                ) : (
+                    <View style={[styles.tag, styles.public]}>
+                        <Text style={styles.tagText}>Public</Text>
                     </View>
                 )}
             </View>
@@ -73,7 +77,7 @@ const EventCard: React.FC<EventCardProps> = ({
             {/* Organizer */}
             <View style={styles.organizerRow}>
                 <Image source={{ uri: "https://via.placeholder.com/40" }} style={styles.avatar} />
-                <Text style={styles.organizerText}>{organizer}</Text>
+                <Text style={styles.organizerText}>Organizer: {organizer}</Text>
             </View>
 
             {/* Description */}
@@ -181,6 +185,9 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         color: "#FFD700", // Gold color for visibility
         marginRight: 10,
+    },
+    public: {
+        backgroundColor: "#4CAF50", // Green background for public events
     },
 });
 

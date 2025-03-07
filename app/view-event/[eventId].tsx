@@ -373,7 +373,7 @@ export default function EventDetailsPage() {
                 <EventCard
                     title={event.title ?? "No Title"}
                     price={event.cost === 0 ? "Free" : event.cost.toString()}
-                    inviteOnly={event.visibility === "Invite Only"}
+                    inviteOnly={event.visibility === "invite-only"}
                     date={event.date ? new Date(event.date).toLocaleDateString() : "TBA"}
                     time={event.time ?? "TBA"}
                     location={event.location ?? "Unknown"}
