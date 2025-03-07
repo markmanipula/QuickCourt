@@ -1,6 +1,7 @@
 import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
-import { FontAwesome5, MaterialIcons, Ionicons } from "@expo/vector-icons";
+import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { FontAwesome5, MaterialIcons, Ionicons, Feather } from "@expo/vector-icons"; // Added Feather for clipboard icon
+import * as Clipboard from 'expo-clipboard'; // Import Clipboard from expo
 
 interface EventCardProps {
     title: string;
@@ -27,6 +28,13 @@ const EventCard: React.FC<EventCardProps> = ({
                                                  details,
                                                  passcode
                                              }) => {
+    const handleCopy = () => {
+        if (passcode) {
+            Clipboard.setString(passcode); // Copies the passcode to clipboard
+            alert("Passcode copied!"); // Optional: Add some feedback for the user
+        }
+    };
+
     return (
         <View style={styles.card}>
             {/* Event Title */}
@@ -69,17 +77,20 @@ const EventCard: React.FC<EventCardProps> = ({
             </View>
 
             {/* Description */}
-            <Text style={styles.details}>
-                {details !== "N/A" && details !== "No details" ? (
-                    <Text style={styles.details}>{details}</Text>
-                ) : null}
-            </Text>
+            {details !== "N/A" && details !== "No details" && details ? (
+                <Text style={styles.details}>{details}</Text>
+            ) : null}
 
             {/* Passcode (Visible only if the user is the organizer) */}
             {passcode && (
                 <View style={styles.passcodeContainer}>
                     <Text style={styles.passcodeLabel}>Event Passcode:</Text>
-                    <Text style={styles.passcodeText}>{passcode}</Text>
+                    <View style={styles.passcodeRow}>
+                        <Text style={styles.passcodeText}>{passcode}</Text>
+                        <TouchableOpacity onPress={handleCopy}>
+                            <Feather name="clipboard" size={20} color="#FFD700" />
+                        </TouchableOpacity>
+                    </View>
                 </View>
             )}
         </View>
@@ -155,17 +166,21 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         alignItems: "center",
     },
-
     passcodeLabel: {
         fontSize: 16,
         fontWeight: "bold",
         color: "#fff",
     },
-
+    passcodeRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginTop: 8,
+    },
     passcodeText: {
         fontSize: 18,
         fontWeight: "bold",
         color: "#FFD700", // Gold color for visibility
+        marginRight: 10,
     },
 });
 
