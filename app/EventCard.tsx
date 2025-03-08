@@ -37,46 +37,50 @@ const EventCard: React.FC<EventCardProps> = ({
 
     return (
         <View style={styles.card}>
-            {/* Title and Date/Time inline */}
-            <View style={styles.titleContainer}>
-                <Text style={styles.title}>{title}</Text>
-                <View style={styles.dateTimeContainer}>
-                    <FontAwesome5 name="calendar-alt" size={18} color="white" />
-                    <Text style={styles.dateTime}>{date}, {time}</Text>
-                </View>
-            </View>
+            {/* Event Title */}
+            <Text style={styles.title}>{title}</Text>
 
-            {/* Price & Invite Only Tags and Address inline */}
-            <View style={styles.bottomRow}>
-                <View style={styles.tagsContainer}>
-                    <View style={styles.tag}>
-                        <Text style={styles.tagText}>${price}</Text>
+            {/* Price & Invite Only Tags */}
+            <View style={styles.tagsContainer}>
+                <View style={styles.tag}>
+                    <Text style={styles.tagText}>${price}</Text>
+                </View>
+                {inviteOnly ? (
+                    <View style={[styles.tag, styles.inviteOnly]}>
+                        <Text style={styles.tagText}>Invite Only</Text>
                     </View>
-                    {inviteOnly ? (
-                        <View style={[styles.tag, styles.inviteOnly]}>
-                            <Text style={styles.tagText}>Invite Only</Text>
-                        </View>
-                    ) : (
-                        <View style={[styles.tag, styles.public]}>
-                            <Text style={styles.tagText}>Public</Text>
-                        </View>
-                    )}
-                </View>
-
-                {/* Location (Address) inline with Price and Invite Only */}
-                <View style={styles.locationContainer}>
-                    <Ionicons name="location-outline" size={18} color="white" />
-                    <Text style={styles.infoText}>{location}</Text>
-                </View>
+                ) : (
+                    <View style={[styles.tag, styles.public]}>
+                        <Text style={styles.tagText}>Public</Text>
+                    </View>
+                )}
             </View>
 
-            {/* Organizer and Participants inline */}
-            <View style={styles.organizerRow}>
-                <View style={styles.organizerContainer}>
-                    <MaterialIcons name="person" size={18} color="white" />
-                    <Text style={styles.organizerText}>Organizer: {organizer}</Text>
+            {/* Date & Time */}
+            <View style={styles.infoRow}>
+                <FontAwesome5 name="calendar-alt" size={16} color="white" />
+                <Text style={styles.infoText}>{date}, {time}</Text>
+            </View>
+
+            {/* Location */}
+            <View style={styles.infoRow}>
+                <Ionicons name="location-outline" size={18} color="white" />
+                <Text style={styles.infoText}>{location}</Text>
+            </View>
+
+            {/* Bottom row for organizer and participants */}
+            <View style={styles.bottomRow}>
+                {/* Organizer */}
+                <View style={styles.organizerRow}>
+                    <MaterialIcons name="person" size={24} color="white" />
+                    <View style={styles.organizerTextContainer}>
+                        <Text style={styles.organizerLabel}>Organizer</Text>
+                        <Text style={styles.organizerName}>{organizer}</Text>
+                    </View>
                 </View>
-                <View style={styles.participantsContainer}>
+
+                {/* Participants */}
+                <View style={styles.infoRow}>
                     <MaterialIcons name="groups" size={18} color="white" />
                     <Text style={styles.infoText}>Participants {participants}</Text>
                 </View>
@@ -110,32 +114,14 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         margin: 10,
     },
-    titleContainer: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-    },
     title: {
         fontSize: 20,
         fontWeight: "bold",
         color: "white",
     },
-    dateTimeContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-    },
-    dateTime: {
-        color: "white",
-        marginLeft: 8,
-        fontSize: 14,
-    },
-    bottomRow: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginTop: 12,
-    },
     tagsContainer: {
         flexDirection: "row",
+        marginTop: 8,
     },
     tag: {
         backgroundColor: "#000",
@@ -155,32 +141,36 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: "bold",
     },
-    locationContainer: {
+    infoRow: {
         flexDirection: "row",
         alignItems: "center",
+        marginTop: 10,
     },
     infoText: {
         color: "white",
         marginLeft: 8,
         fontSize: 14,
     },
-    organizerRow: {
+    bottomRow: {
         flexDirection: "row",
         justifyContent: "space-between",
         marginTop: 12,
     },
-    organizerContainer: {
+    organizerRow: {
         flexDirection: "row",
         alignItems: "center",
     },
-    participantsContainer: {
-        flexDirection: "row",
-        alignItems: "center",
+    organizerTextContainer: {
+        marginLeft: 10,
     },
-    organizerText: {
+    organizerLabel: {
+        fontSize: 12,
         color: "white",
-        fontSize: 14,
         fontWeight: "bold",
+    },
+    organizerName: {
+        fontSize: 14,
+        color: "white",
     },
     details: {
         color: "white",
