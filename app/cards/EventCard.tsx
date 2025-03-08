@@ -51,26 +51,26 @@ const EventCard: React.FC<EventCardProps> = ({
                 </View>
             </View>
 
-            {/* Price & Invite Only Tags */}
-            <View style={styles.tagsContainer}>
-                <View style={styles.tag}>
-                    <Text style={styles.tagText}>${price}</Text>
+            {/* Price, Invite Only Tags and Location */}
+            <View style={styles.addressContainer}>
+                <View style={styles.tagsContainer}>
+                    <View style={styles.tag}>
+                        <Text style={styles.tagText}>${price}</Text>
+                    </View>
+                    {inviteOnly ? (
+                        <View style={[styles.tag, styles.inviteOnly]}>
+                            <Text style={styles.tagText}>Invite Only</Text>
+                        </View>
+                    ) : (
+                        <View style={[styles.tag, styles.public]}>
+                            <Text style={styles.tagText}>Public</Text>
+                        </View>
+                    )}
                 </View>
-                {inviteOnly ? (
-                    <View style={[styles.tag, styles.inviteOnly]}>
-                        <Text style={styles.tagText}>Invite Only</Text>
-                    </View>
-                ) : (
-                    <View style={[styles.tag, styles.public]}>
-                        <Text style={styles.tagText}>Public</Text>
-                    </View>
-                )}
-            </View>
-
-            {/* Location */}
-            <View style={styles.infoRow}>
-                <Ionicons name="location-outline" size={18} color="white" />
-                <Text style={styles.infoText}>{location}</Text>
+                <View style={styles.infoRow}>
+                    <Ionicons name="location-outline" size={18} color="white" />
+                    <Text style={styles.infoText}>{location}</Text>
+                </View>
             </View>
 
             {/* Bottom row for organizer and participants */}
@@ -86,7 +86,7 @@ const EventCard: React.FC<EventCardProps> = ({
 
                 {/* Participants */}
                 <View style={styles.infoRow}>
-                    <MaterialIcons name="groups" size={18} color="white" />
+                    <MaterialIcons name="groups" size={22} color="white" />
                     <Text style={styles.infoText}>Participants {participants}</Text>
                 </View>
             </View>
@@ -117,29 +117,27 @@ const styles = StyleSheet.create({
         backgroundColor: "#3F2D91",
         padding: 20,
         borderRadius: 15,
-        margin: 10,
     },
     title: {
         fontSize: 20,
         fontWeight: "bold",
         color: "white",
-        flex: 1, // This allows the title to take up available space
+        flex: 1,
     },
     headerContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center', // Center aligns title and date
+        alignItems: 'center',
     },
     dateContainer: {
-        marginLeft: 10, // Space between title and date section
+        marginLeft: 10,
     },
     dateTextContainer: {
-        marginLeft: 8, // Space between icon and date
+        marginLeft: 8,
         justifyContent: 'flex-start',
     },
     tagsContainer: {
         flexDirection: "row",
-        marginTop: 8,
     },
     tag: {
         backgroundColor: "#000",
@@ -159,10 +157,15 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: "bold",
     },
+    addressContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between", // Aligns the tags and location on the right
+        alignItems: "center",
+        marginTop: 10,
+    },
     infoRow: {
         flexDirection: "row",
-        alignItems: "flex-start",
-        marginTop: 10,
+        alignItems: "center",
     },
     infoText: {
         color: "white",
@@ -203,7 +206,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     passcodeLabel: {
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: "bold",
         color: "#fff",
     },
@@ -213,7 +216,7 @@ const styles = StyleSheet.create({
         marginTop: 8,
     },
     passcodeText: {
-        fontSize: 18,
+        fontSize: 14,
         fontWeight: "bold",
         color: "#FFD700",
         marginRight: 10,
