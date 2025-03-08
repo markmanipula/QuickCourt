@@ -37,8 +37,14 @@ const EventCard: React.FC<EventCardProps> = ({
 
     return (
         <View style={styles.card}>
-            {/* Event Title */}
-            <Text style={styles.title}>{title}</Text>
+            {/* Title and Date/Time inline */}
+            <View style={styles.titleContainer}>
+                <Text style={styles.title}>{title}</Text>
+                <View style={styles.dateTimeContainer}>
+                    <FontAwesome5 name="calendar-alt" size={18} color="white" />
+                    <Text style={styles.dateTime}>{date}, {time}</Text>
+                </View>
+            </View>
 
             {/* Price & Invite Only Tags */}
             <View style={styles.tagsContainer}>
@@ -56,12 +62,6 @@ const EventCard: React.FC<EventCardProps> = ({
                 )}
             </View>
 
-            {/* Date & Time */}
-            <View style={styles.infoRow}>
-                <FontAwesome5 name="calendar-alt" size={16} color="white" />
-                <Text style={styles.infoText}>{date}, {time}</Text>
-            </View>
-
             {/* Location */}
             <View style={styles.infoRow}>
                 <Ionicons name="location-outline" size={18} color="white" />
@@ -72,12 +72,6 @@ const EventCard: React.FC<EventCardProps> = ({
             <View style={styles.infoRow}>
                 <MaterialIcons name="groups" size={18} color="white" />
                 <Text style={styles.infoText}>Participants {participants}</Text>
-            </View>
-
-            {/* Organizer */}
-            <View style={styles.organizerRow}>
-                <Image source={{ uri: "https://via.placeholder.com/40" }} style={styles.avatar} />
-                <Text style={styles.organizerText}>Organizer: {organizer}</Text>
             </View>
 
             {/* Description */}
@@ -108,10 +102,25 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         margin: 10,
     },
+    titleContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
     title: {
         fontSize: 20,
         fontWeight: "bold",
         color: "white",
+    },
+    dateTimeContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    dateTime: {
+        fontSize: 14,
+        fontWeight: "bold",
+        color: "white",
+        marginLeft: 8,
     },
     tagsContainer: {
         flexDirection: "row",
@@ -127,6 +136,9 @@ const styles = StyleSheet.create({
     inviteOnly: {
         backgroundColor: "#5A5A5A",
     },
+    public: {
+        backgroundColor: "#4CAF50", // Green background for public events
+    },
     tagText: {
         color: "white",
         fontSize: 14,
@@ -141,22 +153,6 @@ const styles = StyleSheet.create({
         color: "white",
         marginLeft: 8,
         fontSize: 14,
-    },
-    organizerRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginTop: 12,
-    },
-    avatar: {
-        width: 30,
-        height: 30,
-        borderRadius: 15,
-        marginRight: 10,
-    },
-    organizerText: {
-        color: "white",
-        fontSize: 14,
-        fontWeight: "bold",
     },
     details: {
         color: "white",
@@ -185,9 +181,6 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         color: "#FFD700", // Gold color for visibility
         marginRight: 10,
-    },
-    public: {
-        backgroundColor: "#4CAF50", // Green background for public events
     },
 });
 
