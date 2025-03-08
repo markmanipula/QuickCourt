@@ -104,12 +104,12 @@ const styles = StyleSheet.create({
     header: {
         fontSize: 26,
         fontWeight: "bold",
-        color: "#fff",
+        color: "#2c2c2c",
         textAlign: "center",
     },
     subHeader: {
         fontSize: 18,
-        color: "#fff",
+        color: "#2c2c2c",
         marginBottom: 30,
         textAlign: "center",
     },
