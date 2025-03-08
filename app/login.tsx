@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
     authButton: {
-        backgroundColor: "#ffcc00",
+        backgroundColor: "#e8cc54",
         paddingVertical: 12,
         paddingHorizontal: 20,
         borderRadius: 8,
