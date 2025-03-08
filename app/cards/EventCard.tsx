@@ -115,7 +115,7 @@ const EventCard: React.FC<EventCardProps> = ({
 const styles = StyleSheet.create({
     card: {
         backgroundColor: "#3F2D91",
-        padding: 20,
+        padding: 15,
         borderRadius: 15,
     },
     title: {
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
     },
     passcodeContainer: {
         marginTop: 10,
-        padding: 10,
+        padding: 6,
         backgroundColor: "rgba(255, 255, 255, 0.2)",
         borderRadius: 8,
         alignItems: "center",
@@ -213,13 +213,13 @@ const styles = StyleSheet.create({
     passcodeRow: {
         flexDirection: "row",
         alignItems: "center",
-        marginTop: 8,
+        marginTop: 4,
     },
     passcodeText: {
         fontSize: 14,
         fontWeight: "bold",
         color: "#FFD700",
-        marginRight: 10,
+        marginRight: 6,
     },
 });
 
