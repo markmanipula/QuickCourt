@@ -112,10 +112,10 @@ export default function ParticipantsPage() {
     }
 
     return (
-        <LinearGradient colors={['#4c669f', '#3b5998', '#192f5d']} style={styles.gradientContainer}>
+        <LinearGradient colors={['#d4eaf7', '#a9d6eb', '#f5faff']} style={styles.gradientContainer}>
             <TouchableOpacity onPress={() => router.back()} style={styles.goBackButton}>
                 <View style={styles.backButtonContent}>
-                    <Ionicons name="arrow-back" size={24} color="#fff" />
+                    <Ionicons name="arrow-back" size={24} color="#2c2c2c" />
                     <Text style={styles.goBackText}>Back</Text>
                 </View>
             </TouchableOpacity>
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     header: {
         fontSize: 22,
         fontWeight: 'bold',
-        color: '#fff',
+        color: '#1e1e1e',
         marginBottom: 15,
     },
     participantCard: {
@@ -178,12 +178,12 @@ const styles = StyleSheet.create({
     participantName: {
         fontSize: 18,
         fontWeight: '500',
-        color: '#fff',
+        color: '#2c2c2c',
     },
     paymentStatus: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: '#fff',
+        color: '#333333',
         marginTop: 5,
     },
     noParticipants: {
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
     goBackText: {
         fontSize: 18,
         fontWeight: "600",
-        color: "#fff",
+        color: "#2c2c2c",
         marginLeft: 8,
     },
     errorText: {

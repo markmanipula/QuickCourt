@@ -69,7 +69,7 @@ export default function WaitlistPage() {
 
     if (loading) {
         return (
-            <LinearGradient colors={['#3b82f6', '#1e3a8a']} style={styles.gradientContainer}>
+            <LinearGradient colors={['#d4eaf7', '#a9d6eb', '#f5faff']} style={styles.gradientContainer}>
                 <ActivityIndicator size="large" color="#fff" />
                 <Text style={styles.loadingText}>Loading waitlist...</Text>
             </LinearGradient>
@@ -94,7 +94,7 @@ export default function WaitlistPage() {
         <LinearGradient colors={['#d4eaf7', '#a9d6eb', '#f5faff']} style={styles.gradientContainer}>
             <TouchableOpacity onPress={() => router.back()} style={styles.goBackButton}>
                 <View style={styles.backButtonContent}>
-                    <Ionicons name="arrow-back" size={24} color="#fff" />
+                    <Ionicons name="arrow-back" size={24} color="#2c2c2c" />
                     <Text style={styles.goBackText}>Back</Text>
                 </View>
             </TouchableOpacity>
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     header: {
         fontSize: 22,
         fontWeight: 'bold',
-        color: '#fff',
+        color: '#000000',
         marginBottom: 15,
     },
     participantCard: {
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     },
     noParticipants: {
         fontSize: 16,
-        color: '#e5e7eb',
+        color: '#000000',
         fontStyle: 'italic',
         marginTop: 20,
     },
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     goBackText: {
         fontSize: 18,
         fontWeight: "600",
-        color: "#fff",
+        color: "#2c2c2c",
         marginLeft: 8,
     },
     errorText: {
