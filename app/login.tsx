@@ -65,7 +65,7 @@ export default function AuthPage() {
                     contentContainerStyle={styles.scrollContainer}
                     keyboardShouldPersistTaps="handled"
                 >
-                    <LinearGradient colors={['#4c669f', '#3b5998', '#192f5d']} style={styles.gradientContainer}>
+                    <LinearGradient colors={['#d4eaf7', '#a9d6eb', '#f5faff']} style={styles.gradientContainer}>
                         <View style={styles.container}>
                             <Image source={require('@/assets/images/volleyball.png')} style={styles.image} />
                             <Text style={styles.welcomeText}>Welcome to QuickCourt!</Text>

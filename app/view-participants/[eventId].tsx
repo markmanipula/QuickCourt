@@ -90,7 +90,7 @@ export default function ParticipantsPage() {
 
     if (loading) {
         return (
-            <LinearGradient colors={['#3b82f6', '#1e3a8a']} style={styles.gradientContainer}>
+            <LinearGradient colors={['#d4eaf7', '#a9d6eb', '#f5faff']} style={styles.gradientContainer}>
                 <ActivityIndicator size="large" color="#fff" />
                 <Text style={styles.loadingText}>Loading participants...</Text>
             </LinearGradient>

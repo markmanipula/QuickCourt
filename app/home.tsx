@@ -60,7 +60,7 @@ export default function HomePage() {
     };
 
     return (
-        <LinearGradient colors={["#4c669f", "#3b5998", "#192f6a"]} style={styles.container}>
+        <LinearGradient colors={['#d4eaf7', '#a9d6eb', '#f5faff']} style={styles.container}>
             <SafeAreaView style={styles.safeContainer}>
                 <Image source={require("@/assets/images/volleyball.png")} style={styles.logo} />
                 <Text style={styles.header}>Welcome, {username}!</Text>

@@ -179,7 +179,7 @@ export default function EditEventScreen() {
             style={{ flex: 1 }}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-            <LinearGradient colors={['#4c669f', '#3b5998', '#192f5d']} style={styles.container}>
+            <LinearGradient colors={['#d4eaf7', '#a9d6eb', '#f5faff']} style={styles.container}>
                 <ScrollView contentContainerStyle={styles.scrollContainer}>
                     <TouchableOpacity onPress={() => router.back()} style={styles.goBackButton}>
                         <View style={styles.backButtonContent}>
