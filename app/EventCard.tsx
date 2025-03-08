@@ -70,16 +70,16 @@ const EventCard: React.FC<EventCardProps> = ({
                 </View>
             </View>
 
-            {/* Participants */}
-            <View style={styles.infoRow}>
-                <MaterialIcons name="groups" size={18} color="white" />
-                <Text style={styles.infoText}>Participants {participants}</Text>
-            </View>
-
-            {/* Organizer */}
+            {/* Organizer and Participants inline */}
             <View style={styles.organizerRow}>
-                <Image source={{ uri: "https://via.placeholder.com/40" }} style={styles.avatar} />
-                <Text style={styles.organizerText}>Organizer: {organizer}</Text>
+                <View style={styles.organizerContainer}>
+                    <MaterialIcons name="person" size={18} color="white" />
+                    <Text style={styles.organizerText}>Organizer: {organizer}</Text>
+                </View>
+                <View style={styles.participantsContainer}>
+                    <MaterialIcons name="groups" size={18} color="white" />
+                    <Text style={styles.infoText}>Participants {participants}</Text>
+                </View>
             </View>
 
             {/* Description */}
@@ -125,15 +125,14 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     dateTime: {
-        fontSize: 14,
-        fontWeight: "bold",
         color: "white",
         marginLeft: 8,
+        fontSize: 14,
     },
     bottomRow: {
         flexDirection: "row",
         justifyContent: "space-between",
-        marginTop: 10,
+        marginTop: 12,
     },
     tagsContainer: {
         flexDirection: "row",
@@ -165,21 +164,18 @@ const styles = StyleSheet.create({
         marginLeft: 8,
         fontSize: 14,
     },
-    infoRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginTop: 10,
-    },
     organizerRow: {
         flexDirection: "row",
-        alignItems: "center",
+        justifyContent: "space-between",
         marginTop: 12,
     },
-    avatar: {
-        width: 30,
-        height: 30,
-        borderRadius: 15,
-        marginRight: 10,
+    organizerContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    participantsContainer: {
+        flexDirection: "row",
+        alignItems: "center",
     },
     organizerText: {
         color: "white",
