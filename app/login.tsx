@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         marginBottom: 20,
         textAlign: "center",
-        color: "white",
+        color: "#2c2c2c",
     },
     image: {
         width: 150,
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
         color: "#192f5d",
     },
     toggleText: {
-        color: "white",
+        color: "#2c2c2c",
         marginTop: 10,
         textDecorationLine: "underline",
     },
