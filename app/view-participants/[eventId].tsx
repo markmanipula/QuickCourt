@@ -99,7 +99,7 @@ export default function ParticipantsPage() {
 
     if (error) {
         return (
-            <LinearGradient colors={['#4c669f', '#3b5998', '#192f5d']} style={styles.gradientContainer}>
+            <LinearGradient colors={['#d4eaf7', '#a9d6eb', '#f5faff']} style={styles.gradientContainer}>
                 <Text style={styles.errorText}>{error}</Text>
                 <TouchableOpacity onPress={() => router.back()} style={styles.goBackButton}>
                     <View style={styles.backButtonContent}>

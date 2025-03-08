@@ -91,7 +91,7 @@ export default function WaitlistPage() {
     }
 
     return (
-        <LinearGradient colors={['#4c669f', '#3b5998', '#192f5d']} style={styles.gradientContainer}>
+        <LinearGradient colors={['#d4eaf7', '#a9d6eb', '#f5faff']} style={styles.gradientContainer}>
             <TouchableOpacity onPress={() => router.back()} style={styles.goBackButton}>
                 <View style={styles.backButtonContent}>
                     <Ionicons name="arrow-back" size={24} color="#fff" />
