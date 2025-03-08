@@ -46,32 +46,40 @@ const EventCard: React.FC<EventCardProps> = ({
                 </View>
             </View>
 
-            {/* Price & Invite Only Tags */}
-            <View style={styles.tagsContainer}>
-                <View style={styles.tag}>
-                    <Text style={styles.tagText}>${price}</Text>
+            {/* Price & Invite Only Tags and Address inline */}
+            <View style={styles.bottomRow}>
+                <View style={styles.tagsContainer}>
+                    <View style={styles.tag}>
+                        <Text style={styles.tagText}>${price}</Text>
+                    </View>
+                    {inviteOnly ? (
+                        <View style={[styles.tag, styles.inviteOnly]}>
+                            <Text style={styles.tagText}>Invite Only</Text>
+                        </View>
+                    ) : (
+                        <View style={[styles.tag, styles.public]}>
+                            <Text style={styles.tagText}>Public</Text>
+                        </View>
+                    )}
                 </View>
-                {inviteOnly ? (
-                    <View style={[styles.tag, styles.inviteOnly]}>
-                        <Text style={styles.tagText}>Invite Only</Text>
-                    </View>
-                ) : (
-                    <View style={[styles.tag, styles.public]}>
-                        <Text style={styles.tagText}>Public</Text>
-                    </View>
-                )}
-            </View>
 
-            {/* Location */}
-            <View style={styles.infoRow}>
-                <Ionicons name="location-outline" size={18} color="white" />
-                <Text style={styles.infoText}>{location}</Text>
+                {/* Location (Address) inline with Price and Invite Only */}
+                <View style={styles.locationContainer}>
+                    <Ionicons name="location-outline" size={18} color="white" />
+                    <Text style={styles.infoText}>{location}</Text>
+                </View>
             </View>
 
             {/* Participants */}
             <View style={styles.infoRow}>
                 <MaterialIcons name="groups" size={18} color="white" />
                 <Text style={styles.infoText}>Participants {participants}</Text>
+            </View>
+
+            {/* Organizer */}
+            <View style={styles.organizerRow}>
+                <Image source={{ uri: "https://via.placeholder.com/40" }} style={styles.avatar} />
+                <Text style={styles.organizerText}>Organizer: {organizer}</Text>
             </View>
 
             {/* Description */}
@@ -122,9 +130,13 @@ const styles = StyleSheet.create({
         color: "white",
         marginLeft: 8,
     },
+    bottomRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginTop: 10,
+    },
     tagsContainer: {
         flexDirection: "row",
-        marginTop: 8,
     },
     tag: {
         backgroundColor: "#000",
@@ -144,15 +156,35 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: "bold",
     },
-    infoRow: {
+    locationContainer: {
         flexDirection: "row",
         alignItems: "center",
-        marginTop: 10,
     },
     infoText: {
         color: "white",
         marginLeft: 8,
         fontSize: 14,
+    },
+    infoRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginTop: 10,
+    },
+    organizerRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginTop: 12,
+    },
+    avatar: {
+        width: 30,
+        height: 30,
+        borderRadius: 15,
+        marginRight: 10,
+    },
+    organizerText: {
+        color: "white",
+        fontSize: 14,
+        fontWeight: "bold",
     },
     details: {
         color: "white",
