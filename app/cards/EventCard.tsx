@@ -58,10 +58,10 @@ const EventCard: React.FC<EventCardProps> = ({
 
             {/* Date & Time */}
             <View style={styles.infoRow}>
-                <FontAwesome5 name="calendar-alt" size={24} color="white" /> {/* Increased size from 16 to 24 */}
+                <FontAwesome5 name="calendar-alt" size={24} color="white" /> {/* Increased size */}
                 <View style={styles.dateContainer}>
                     <Text style={styles.infoText}>{date}</Text>
-                    <Text style={styles.infoText}>{time}</Text> {/* Display time below date */}
+                    <Text style={styles.infoText}>{time}</Text> {/* Time below date */}
                 </View>
             </View>
 
@@ -144,6 +144,14 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: "bold",
     },
+    infoRow: {
+        flexDirection: "row",
+        alignItems: "flex-start", // Align items to the top
+        marginTop: 10,
+    },
+    dateContainer: {
+        marginLeft: 8, // Space between icon and text
+    },
     infoText: {
         color: "white",
         marginLeft: 8,
@@ -197,14 +205,6 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         color: "#FFD700", // Gold color for visibility
         marginRight: 10,
-    },
-    infoRow: {
-        flexDirection: "row",
-        alignItems: "flex-start", // Align items to the top
-        marginTop: 10,
-    },
-    dateContainer: {
-        marginLeft: 8, // Add some space between icon and text
     },
 });
 
