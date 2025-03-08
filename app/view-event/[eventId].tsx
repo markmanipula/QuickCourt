@@ -5,7 +5,8 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/firebaseConfig"; // Ensure the correct path
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from "@expo/vector-icons";
-import EventCard from "@/app/EventCard"; // Importing gradient component
+import EventCard from "@/app/cards/EventCard";
+import {ENDPOINTS} from "@/app/utils/constants"; // Importing gradient component
 
 export default function EventDetailsPage() {
     const { eventId } = useLocalSearchParams();
@@ -41,7 +42,7 @@ export default function EventDetailsPage() {
 
         const fetchEventDetails = async () => {
             try {
-                const response = await fetch(`http://10.0.0.9:5001/events/${eventId}`);
+                const response = await fetch(ENDPOINTS.EVENT_BY_ID(eventId));
                 if (!response.ok) throw new Error('Failed to fetch event details');
 
                 const data = await response.json();
@@ -99,7 +100,7 @@ export default function EventDetailsPage() {
                                 setJoining(true);
 
                                 try {
-                                    const response = await fetch(`http://10.0.0.9:5001/events/${eventId}/join`, {
+                                    const response = await fetch(ENDPOINTS.JOIN_EVENT(eventId), {
                                         method: 'POST',
                                         headers: { 'Content-Type': 'application/json' },
                                         body: JSON.stringify(eventData),
@@ -132,7 +133,7 @@ export default function EventDetailsPage() {
             setJoining(true);
 
             try {
-                const response = await fetch(`http://10.0.0.9:5001/events/${eventId}/join`, {
+                const response = await fetch(ENDPOINTS.JOIN_EVENT(eventId), {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(eventData),
@@ -161,7 +162,7 @@ export default function EventDetailsPage() {
             setJoining(true);
 
             try {
-                const response = await fetch(`http://10.0.0.9:5001/events/${eventId}/join`, {
+                const response = await fetch(ENDPOINTS.JOIN_EVENT(eventId), {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(eventData),
@@ -233,7 +234,7 @@ export default function EventDetailsPage() {
                         setLeaving(true);
 
                         try {
-                            const response = await fetch(`http://10.0.0.9:5001/events/${eventId}/leave`, {
+                            const response = await fetch(ENDPOINTS.LEAVE_EVENT(eventId), {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify(eventData),
@@ -276,7 +277,7 @@ export default function EventDetailsPage() {
                         setLeaving(true);
 
                         try {
-                            const response = await fetch(`http://10.0.0.9:5001/events/${eventId}/leave`, {
+                            const response = await fetch(ENDPOINTS.LEAVE_EVENT(eventId), {
                                 method: 'POST',
                                 headers: {'Content-Type': 'application/json'},
                                 body: JSON.stringify(eventData),
@@ -326,7 +327,7 @@ export default function EventDetailsPage() {
                     text: "Delete",
                     onPress: async () => {
                         try {
-                            const response = await fetch(`http://10.0.0.9:5001/events/${eventId}`, {
+                            const response = await fetch(ENDPOINTS.EVENT_BY_ID(eventId), {
                                 method: "DELETE",
                             });
 

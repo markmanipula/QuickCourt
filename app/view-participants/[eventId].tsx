@@ -4,7 +4,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from "@expo/vector-icons";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/firebaseConfig"; // Ensure the correct path
+import { auth } from "@/firebaseConfig";
+import {ENDPOINTS} from "@/app/utils/constants"; // Ensure the correct path
 
 interface IParticipant {
     name: string;
@@ -29,7 +30,7 @@ export default function ParticipantsPage() {
             }
 
             try {
-                const response = await fetch(`http://10.0.0.9:5001/events/${eventId}`);
+                const response = await fetch(ENDPOINTS.EVENT_BY_ID(eventId));
                 if (!response.ok) {
                     throw new Error("Failed to fetch participants");
                 }
@@ -73,7 +74,7 @@ export default function ParticipantsPage() {
             );
             setParticipants(updatedParticipants); // Optimistic UI update
 
-            const response = await fetch(`http://10.0.0.9:5001/events/${eventId}/participants/${participant.name}/toggle-paid`, {
+            const response = await fetch(ENDPOINTS.TOGGLE_PAID(eventId, participant.name), {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
             });

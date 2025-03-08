@@ -5,6 +5,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/firebaseConfig";
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from "@expo/vector-icons";
+import {ENDPOINTS} from "@/app/utils/constants";
 
 export default function CreateEventScreen() {
     const router = useRouter();
@@ -114,7 +115,7 @@ export default function CreateEventScreen() {
 
         try {
             console.log("Logging event data:", eventData);
-            const response = await fetch("http://10.0.0.9:5001/events", {
+            const response = await fetch(ENDPOINTS.EVENTS , {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

@@ -5,6 +5,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { auth } from "@/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
+import {ENDPOINTS} from "@/app/utils/constants";
 
 export default function EventsPage() {
     const router = useRouter();
@@ -37,7 +38,7 @@ export default function EventsPage() {
     useEffect(() => {
         const fetchEvents = async () => {
             try {
-                const response = await fetch('http://10.0.0.9:5001/events');
+                const response = await fetch(ENDPOINTS.EVENTS);
                 if (!response.ok) {
                     throw new Error('Failed to fetch events');
                 }

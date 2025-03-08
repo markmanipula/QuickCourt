@@ -5,6 +5,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/firebaseConfig";
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from "@expo/vector-icons";
+import {ENDPOINTS} from "@/app/utils/constants";
 
 export default function EditEventScreen() {
     const router = useRouter();
@@ -36,7 +37,7 @@ export default function EditEventScreen() {
 
         const fetchEventData = async () => {
             try {
-                const response = await fetch(`http://10.0.0.9:5001/events/${eventId}`);
+                const response = await fetch(ENDPOINTS.EVENT_BY_ID(eventId));
                 const data = await response.json();
                 if (data) {
                     setTitle(data.title);
@@ -151,7 +152,7 @@ export default function EditEventScreen() {
         console.log("submitted", eventData);
 
         try {
-            const response = await fetch(`http://10.0.0.9:5001/events/${eventId}`, {
+            const response = await fetch(ENDPOINTS.EVENT_BY_ID(eventId), {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
