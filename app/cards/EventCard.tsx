@@ -114,7 +114,7 @@ const EventCard: React.FC<EventCardProps> = ({
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: "#3F2D91",
+        backgroundColor: "#5485bc",
         padding: 15,
         borderRadius: 15,
     },
