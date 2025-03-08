@@ -1,7 +1,7 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
-import { FontAwesome5, MaterialIcons, Ionicons, Feather } from "@expo/vector-icons"; // Added Feather for clipboard icon
-import * as Clipboard from 'expo-clipboard'; // Import Clipboard from expo
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { FontAwesome5, MaterialIcons, Ionicons, Feather } from "@expo/vector-icons";
+import * as Clipboard from 'expo-clipboard';
 
 interface EventCardProps {
     title: string;
@@ -30,15 +30,26 @@ const EventCard: React.FC<EventCardProps> = ({
                                              }) => {
     const handleCopy = () => {
         if (passcode) {
-            Clipboard.setString(passcode); // Copies the passcode to clipboard
-            alert("Passcode copied!"); // Optional: Add some feedback for the user
+            Clipboard.setString(passcode);
+            alert("Passcode copied!");
         }
     };
 
     return (
         <View style={styles.card}>
-            {/* Event Title */}
-            <Text style={styles.title}>{title}</Text>
+            {/* Event Title and Date */}
+            <View style={styles.headerContainer}>
+                <Text style={styles.title}>{title}</Text>
+                <View style={styles.dateContainer}>
+                    <View style={styles.infoRow}>
+                        <FontAwesome5 name="calendar-alt" size={24} color="white" />
+                        <View style={styles.dateTextContainer}>
+                            <Text style={styles.infoText}>{date}</Text>
+                            <Text style={styles.infoText}>{time}</Text>
+                        </View>
+                    </View>
+                </View>
+            </View>
 
             {/* Price & Invite Only Tags */}
             <View style={styles.tagsContainer}>
@@ -54,15 +65,6 @@ const EventCard: React.FC<EventCardProps> = ({
                         <Text style={styles.tagText}>Public</Text>
                     </View>
                 )}
-            </View>
-
-            {/* Date & Time */}
-            <View style={styles.infoRow}>
-                <FontAwesome5 name="calendar-alt" size={24} color="white" /> {/* Increased size */}
-                <View style={styles.dateContainer}>
-                    <Text style={styles.infoText}>{date}</Text>
-                    <Text style={styles.infoText}>{time}</Text> {/* Time below date */}
-                </View>
             </View>
 
             {/* Location */}
@@ -90,7 +92,7 @@ const EventCard: React.FC<EventCardProps> = ({
             </View>
 
             {/* Description */}
-            {details !== "N/A" && details !== "No details" && details ? (
+            {details && details !== "N/A" && details !== "No details" ? (
                 <Text style={styles.details}>{details}</Text>
             ) : null}
 
@@ -112,7 +114,7 @@ const EventCard: React.FC<EventCardProps> = ({
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: "#3F2D91", // Purple Background
+        backgroundColor: "#3F2D91",
         padding: 20,
         borderRadius: 15,
         margin: 10,
@@ -121,6 +123,19 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: "bold",
         color: "white",
+        flex: 1, // This allows the title to take up available space
+    },
+    headerContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center', // Center aligns title and date
+    },
+    dateContainer: {
+        marginLeft: 10, // Space between title and date section
+    },
+    dateTextContainer: {
+        marginLeft: 8, // Space between icon and date
+        justifyContent: 'flex-start',
     },
     tagsContainer: {
         flexDirection: "row",
@@ -137,7 +152,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#5A5A5A",
     },
     public: {
-        backgroundColor: "#4CAF50", // Green background for public events
+        backgroundColor: "#4CAF50",
     },
     tagText: {
         color: "white",
@@ -146,11 +161,8 @@ const styles = StyleSheet.create({
     },
     infoRow: {
         flexDirection: "row",
-        alignItems: "flex-start", // Align items to the top
+        alignItems: "flex-start",
         marginTop: 10,
-    },
-    dateContainer: {
-        marginLeft: 8, // Space between icon and text
     },
     infoText: {
         color: "white",
@@ -203,7 +215,7 @@ const styles = StyleSheet.create({
     passcodeText: {
         fontSize: 18,
         fontWeight: "bold",
-        color: "#FFD700", // Gold color for visibility
+        color: "#FFD700",
         marginRight: 10,
     },
 });
