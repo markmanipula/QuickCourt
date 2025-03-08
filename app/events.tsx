@@ -148,10 +148,11 @@ export default function EventsPage() {
     );
 }
 
-// Styles
 const styles = StyleSheet.create({
     gradientContainer: {
         flex: 1,
+        // You can define a gradient background here if needed;
+        // e.g., using a linear gradient with lighter shades
     },
     container: {
         flex: 1,
@@ -163,7 +164,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         textAlign: "center",
         marginBottom: 20,
-        color: "#fff",
+        color: "#1e293b", // Darker shade for better visibility
     },
     filterContainer: {
         flexDirection: "row",
@@ -175,13 +176,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         borderRadius: 20,
         marginHorizontal: 5,
-        backgroundColor: "#1e3a8a",
+        backgroundColor: "#3b82f6", // Lighter blue for visibility
     },
     activeFilter: {
-        backgroundColor: "#3b82f6",
+        backgroundColor: "#2563eb", // More vibrant blue for active state
     },
     filterText: {
-        color: "#fff",
+        color: "#fff", // Keep white for contrast against buttons
         fontSize: 14,
         fontWeight: "bold",
     },
@@ -189,7 +190,7 @@ const styles = StyleSheet.create({
         padding: 15,
         marginBottom: 10,
         borderRadius: 8,
-        backgroundColor: "#1e3a8a",
+        backgroundColor: "#f1f5f9", // Light gray for contrast
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,
@@ -197,29 +198,29 @@ const styles = StyleSheet.create({
     },
     eventTitle: {
         fontSize: 18,
-        color: "#e0e7ff",
+        color: "#1e293b", // Darker text for the title
         fontWeight: "600",
         marginBottom: 5,
     },
     eventOrganizer: {
         fontSize: 14,
-        color: "#e0e7ff",
+        color: "#1e293b", // Darker text for better visibility
         marginBottom: 5,
     },
     eventDate: {
         fontSize: 14,
-        color: "#e0e7ff",
+        color: "#1e293b", // Darker text for better visibility
         marginBottom: 5,
     },
     eventType: {
         fontSize: 14,
-        color: "#e0e7ff",
+        color: "#1e293b", // Darker text for better visibility
     },
     noEventsText: {
         textAlign: "center",
         fontSize: 18,
         marginTop: 20,
-        color: "#fff",
+        color: "#1e293b", // Darker text for contrast
     },
     errorText: {
         color: "red",
@@ -228,13 +229,13 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     retryButton: {
-        backgroundColor: "#ff7f50",
+        backgroundColor: "#ff4500", // A vibrant coral color for visibility
         padding: 10,
         borderRadius: 5,
         alignItems: "center",
     },
     retryButtonText: {
-        color: "#fff",
+        color: "#fff", // Keep white for better contrast
         fontWeight: "bold",
     },
     goBackButton: {
@@ -249,7 +250,7 @@ const styles = StyleSheet.create({
     goBackText: {
         fontSize: 18,
         fontWeight: "600",
-        color: "#fff",
+        color: "#1e293b", // Darker text for visibility
         marginLeft: 8,
     },
 });
