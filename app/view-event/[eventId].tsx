@@ -470,11 +470,11 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 20,
         backgroundColor: 'transparent',
-        justifyContent: 'space-between', // Ensure the content is spaced out
+        justifyContent: 'space-between',
     },
     scrollContainer: {
         flexGrow: 1,
-        paddingBottom: 20, // Adjusted padding to allow space for buttons
+        paddingBottom: 20,
     },
     eventHeader: {
         backgroundColor: '#1e3a8a',
@@ -499,17 +499,17 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     joinButton: {
-        backgroundColor: '#2563eb',
+        backgroundColor: '#1d4ed8', // Darker blue for better contrast
         padding: 12,
         borderRadius: 8,
         marginTop: 10,
     },
     leaveButtonContainer: {
         paddingHorizontal: 20,
-        marginTop: 15, // Added margin for spacing
+        marginTop: 15,
     },
     leaveButton: {
-        backgroundColor: '#dc2626',
+        backgroundColor: '#b91c1c', // Keep this but ensure text contrast
         padding: 12,
         borderRadius: 8,
         marginTop: 10,
@@ -527,21 +527,20 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     viewParticipantsButton: {
-        backgroundColor: 'transparent', // Outlined button
-        borderWidth: 2,
-        borderColor: '#5eead4', // Lighter teal
+        backgroundColor: '#1f2937', // Dark gray to contrast with the white background
+        borderWidth: 0, // Removing border makes it cleaner
         padding: 12,
         borderRadius: 8,
         marginTop: 15,
     },
     viewParticipantsButtonText: {
         fontSize: 16,
-        color: '#5eead4', // Matches border color
+        color: '#fff', // Using white for contrast
         textAlign: 'center',
         fontWeight: 'bold',
     },
     editButton: {
-        backgroundColor: '#0d9488', // Darker teal
+        backgroundColor: '#0d9488', // Keeping the dark teal
         padding: 12,
         borderRadius: 8,
         marginTop: 10,
@@ -567,12 +566,11 @@ const styles = StyleSheet.create({
         color: "#fff",
         marginLeft: 8,
     },
-    // Add a wrapper to hold the Delete button at the bottom
     buttonsWrapper: {
-        marginTop: 'auto', // This makes the Delete button move to the bottom
+        marginTop: 'auto',
     },
     deleteButton: {
-        backgroundColor: "#b91c1c",
+        backgroundColor: "#991b1b", // Darker red for better visibility
         padding: 12,
         borderRadius: 8,
         marginTop: 10,
