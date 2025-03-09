@@ -12,7 +12,7 @@ export default function CreateEventScreen() {
     const router = useRouter();
     const [title, setTitle] = useState("");
     const [location, setLocation] = useState("");
-    const [dateTime, setDateTime] = useState(new Date()); // Default to current date and time
+    const [dateTime, setDateTime] = useState<Date | null>(null);
     const [cost, setCost] = useState("");
     const [maxParticipants, setMaxParticipants] = useState("");
     const [details, setDetails] = useState("");
@@ -37,9 +37,9 @@ export default function CreateEventScreen() {
     }, []);
 
     const handleDateChange = (event: any, selectedDate: Date | undefined) => {
-        const currentDate = selectedDate || dateTime;
-        setShowPicker(false); // Hide the picker
-        setDateTime(currentDate); // Set the new date/time
+        const currentDate = selectedDate || dateTime || new Date();
+        setShowPicker(false);
+        setDateTime(currentDate);
     };
 
     const handleSubmit = async () => {
@@ -49,7 +49,7 @@ export default function CreateEventScreen() {
         }
 
         const organizerName = `${organizer.firstName} ${organizer.lastName}`;
-        const eventDateTime = new Date(dateTime);
+        const eventDateTime = dateTime ? new Date(dateTime) : new Date(); // Ensure it's a valid date
 
         if (isNaN(eventDateTime.getTime())) {
             alert("Invalid date or time format. Please enter a valid date and time.");
@@ -65,7 +65,7 @@ export default function CreateEventScreen() {
         const eventData = {
             title,
             location,
-            dateTime: eventDateTime.toISOString(), // Send the date as an ISO string
+            dateTime: eventDateTime.toISOString(),
             maxParticipants,
             cost,
             details: details || "N/A",
@@ -121,16 +121,16 @@ export default function CreateEventScreen() {
 
                     <Text style={styles.label}>Date & Time</Text>
                     <TouchableOpacity onPress={() => setShowPicker(true)} style={styles.input}>
-                        <Text>{dateTime.toLocaleString()}</Text> {/* Display the formatted date */}
+                        <Text>{dateTime ? dateTime.toLocaleString() : "Pick Date & Time"} </Text>
                     </TouchableOpacity>
-                    {showPicker && (
+                    {showPicker ? (
                         <DateTimePicker
-                            value={dateTime}
+                            value={dateTime || new Date()} // Fallback to current date
                             mode="datetime"
                             display="default"
                             onChange={handleDateChange}
                         />
-                    )}
+                    ) : null}
 
                     <Text style={styles.label}>Max Participants</Text>
                     <TextInput placeholder="Enter max participants" value={maxParticipants} onChangeText={setMaxParticipants} keyboardType="numeric" style={styles.input} />
@@ -186,8 +186,8 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginBottom: 16,
         width: "100%",
-        justifyContent: "center", // Center the text inside
-        alignItems: "center", // Center the text vertically
+        justifyContent: "center",
+        alignItems: "flex-start",  // Align text to the left
     },
     submitButton: {
         backgroundColor: "#ffa722",
