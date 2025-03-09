@@ -85,7 +85,7 @@ const EventCard: React.FC<EventCardProps> = ({
                 </View>
                 <View style={styles.participantsContainer}>
                     <MaterialIcons name="groups" size={22} color="white" />
-                    <Text style={styles.infoText}>Participants: {participants}</Text>
+                    <Text style={styles.participantsText}>Participants: {participants}</Text>
                 </View>
             </View>
 
@@ -172,6 +172,11 @@ const styles = StyleSheet.create({
     infoText: {
         color: "white",
         fontSize: 14,
+    },
+    participantsText: {
+        color: "white",
+        fontSize: 14,
+        marginLeft: 6,
     },
     timeText: {
         color: "white",
