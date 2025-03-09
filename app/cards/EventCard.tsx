@@ -93,7 +93,7 @@ const EventCard: React.FC<EventCardProps> = ({
 
             {/* Description */}
             {details && details !== "N/A" && details !== "No details" ? (
-                <Text style={styles.details}>{details}</Text>
+                <Text style={styles.details}>Details: {details}</Text>
             ) : null}
 
             {/* Passcode (Visible only if the user is the organizer) */}
