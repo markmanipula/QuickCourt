@@ -10,7 +10,6 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function CreateEventScreen() {
     const router = useRouter();
-    const [title, setTitle] = useState("");
     const [location, setLocation] = useState("");
     const [dateTime, setDateTime] = useState<Date | null>(null);
     const [cost, setCost] = useState("");
@@ -20,6 +19,11 @@ export default function CreateEventScreen() {
     const [showPicker, setShowPicker] = useState(false);
     const [organizer, setOrganizer] = useState<any>(null);
     const [tempDateTime, setTempDateTime] = useState<Date | null>(null); // Temporary date/time state
+    const [showSportDropdown, setShowSportDropdown] = useState(false); // For sport dropdown
+    const [selectedSport, setSelectedSport] = useState(""); // Selected sport
+
+    // List of sports
+    const sports = ["Volleyball", "Basketball", "Golf", "Pickleball", "Other"];
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -55,7 +59,7 @@ export default function CreateEventScreen() {
     };
 
     const handleSubmit = async () => {
-        if (!title || !location || !maxParticipants || !cost || !organizer) {
+        if (!selectedSport || !location || !maxParticipants || !cost || !organizer) {
             alert("Please fill out all required fields.");
             return;
         }
@@ -75,7 +79,7 @@ export default function CreateEventScreen() {
         }
 
         const eventData = {
-            title,
+            title: selectedSport, // Use the selected sport as the title
             location,
             dateTime: eventDateTime.toISOString(),
             maxParticipants,
@@ -125,8 +129,40 @@ export default function CreateEventScreen() {
 
                     <Text style={styles.heading}>Create a New Event</Text>
 
-                    <Text style={styles.label}>Event Title</Text>
-                    <TextInput placeholder="Enter event title" value={title} onChangeText={setTitle} style={styles.input} />
+                    {/* Sport Dropdown */}
+                    <Text style={styles.label}>Select Sport</Text>
+                    <TouchableOpacity onPress={() => setShowSportDropdown(true)} style={styles.input}>
+                        <Text style={{ color: selectedSport ? "black" : "#aaa" }}>
+                            {selectedSport || "Select a sport"}
+                        </Text>
+                    </TouchableOpacity>
+
+                    {/* Sport Dropdown Modal */}
+                    <Modal visible={showSportDropdown} transparent={true} animationType="slide">
+                        <View style={styles.modalContainer}>
+                            <View style={styles.modalContent}>
+                                <Text style={styles.modalHeading}>Select a Sport</Text>
+                                {sports.map((sport, index) => (
+                                    <TouchableOpacity
+                                        key={index}
+                                        style={styles.dropdownItem}
+                                        onPress={() => {
+                                            setSelectedSport(sport);
+                                            setShowSportDropdown(false);
+                                        }}
+                                    >
+                                        <Text style={styles.dropdownItemText}>{sport}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                                <TouchableOpacity
+                                    style={styles.modalButton}
+                                    onPress={() => setShowSportDropdown(false)}
+                                >
+                                    <Text style={styles.modalButtonText}>Close</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </Modal>
 
                     <Text style={styles.label}>Address</Text>
                     <TextInput placeholder="Enter address" value={location} onChangeText={setLocation} style={styles.input} />
@@ -266,6 +302,20 @@ const styles = StyleSheet.create({
         padding: 20,
         width: "90%",
     },
+    modalHeading: {
+        fontSize: 18,
+        fontWeight: "bold",
+        marginBottom: 16,
+        textAlign: "center",
+    },
+    dropdownItem: {
+        paddingVertical: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: "#ccc",
+    },
+    dropdownItemText: {
+        fontSize: 16,
+    },
     modalButtonsContainer: {
         flexDirection: "row",
         justifyContent: "space-between",
@@ -276,6 +326,8 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 20,
         borderRadius: 8,
+        alignItems: "center",
+        marginTop: 10,
     },
     modalButtonText: {
         color: "#fff",
