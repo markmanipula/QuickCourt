@@ -98,7 +98,7 @@ const EventCard: React.FC<EventCardProps> = ({
                 {/* Participants */}
                 <View style={styles.infoRow}>
                     <MaterialIcons name="groups" size={22} color="white" />
-                    <Text style={styles.infoText}>Participants {participants}</Text>
+                    <Text style={styles.infoText}>Participants: {participants}</Text>
                 </View>
             </View>
 
