@@ -33,6 +33,19 @@ const EventCard: React.FC<EventCardProps> = ({
         }
     };
 
+    const formattedDate = dateTime.toLocaleDateString("en-US", {
+        weekday: "short", // 'Mon'
+        month: "numeric",   // 'Jan'
+        day: "numeric",   // '3'
+        year: "numeric",  // '2025'
+    });
+
+    const formattedTime = dateTime.toLocaleTimeString("en-US", {
+        hour: "numeric",   // '1'
+        minute: "numeric", // '40'
+        hour12: true,      // 'pm'
+    });
+
     return (
         <View style={styles.card}>
             {/* Event Title and Date */}
@@ -42,8 +55,8 @@ const EventCard: React.FC<EventCardProps> = ({
                     <View style={styles.infoRow}>
                         <FontAwesome5 name="calendar-alt" size={24} color="white" />
                         <View style={styles.dateTextContainer}>
-                            <Text style={styles.infoText}>{dateTime.toLocaleDateString()}</Text>
-                            <Text style={styles.timeText}>{dateTime.toLocaleTimeString()}</Text>
+                            <Text style={styles.infoText}>{formattedDate}</Text>
+                            <Text style={styles.timeText}>{formattedTime}</Text>
                         </View>
                     </View>
                 </View>
@@ -66,7 +79,7 @@ const EventCard: React.FC<EventCardProps> = ({
                     )}
                 </View>
                 <View style={styles.infoRow}>
-                    <Ionicons name="location-outline" size={18} color="white" />
+                    <Ionicons name="location-outline" size={24} color="white" />
                     <Text style={styles.infoText}>{location}</Text>
                 </View>
             </View>
