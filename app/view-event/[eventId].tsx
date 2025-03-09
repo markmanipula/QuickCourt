@@ -6,7 +6,7 @@ import { auth } from "@/firebaseConfig"; // Ensure the correct path
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from "@expo/vector-icons";
 import EventCard from "@/app/cards/EventCard";
-import {ENDPOINTS} from "@/app/utils/constants"; // Importing gradient component
+import { ENDPOINTS } from "../utils/api-routes";
 
 export default function EventDetailsPage() {
     const { eventId } = useLocalSearchParams();

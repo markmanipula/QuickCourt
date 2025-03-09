@@ -5,7 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from "@expo/vector-icons";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/firebaseConfig";
-import {ENDPOINTS} from "@/app/utils/constants"; // Ensure the correct path
+import { ENDPOINTS } from "../utils/api-routes";
 
 interface IParticipant {
     name: string;

@@ -5,7 +5,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { auth } from "@/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
-import {ENDPOINTS} from "@/app/utils/constants";
+import { ENDPOINTS } from "./utils/api-routes";
 
 export default function EventsPage() {
     const router = useRouter();

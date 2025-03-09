@@ -5,7 +5,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/firebaseConfig";
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from "@expo/vector-icons";
-import { ENDPOINTS } from "@/app/utils/constants";
+import { ENDPOINTS } from "../utils/api-routes";
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function CreateEventScreen() {
