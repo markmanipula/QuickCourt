@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
 import { FontAwesome5, MaterialIcons, Ionicons, Feather } from "@expo/vector-icons";
 import * as Clipboard from 'expo-clipboard';
 
@@ -26,11 +26,9 @@ const EventCard: React.FC<EventCardProps> = ({
                                                  details,
                                                  passcode
                                              }) => {
-    const handleCopy = () => {
-        if (passcode) {
-            Clipboard.setString(passcode);
-            alert("Passcode copied!");
-        }
+    const handleCopy = (text: string) => {
+        Clipboard.setString(text);
+        alert("Copied to clipboard!");
     };
 
     const formattedDate = dateTime.toLocaleDateString("en-US", {
@@ -52,18 +50,16 @@ const EventCard: React.FC<EventCardProps> = ({
             <View style={styles.headerContainer}>
                 <Text style={styles.title}>{title}</Text>
                 <View style={styles.dateContainer}>
-                    <View style={styles.infoRow}>
-                        <FontAwesome5 name="calendar-alt" size={24} color="white" />
-                        <View style={styles.dateTextContainer}>
-                            <Text style={styles.infoText}>{formattedDate}</Text>
-                            <Text style={styles.timeText}>{formattedTime}</Text>
-                        </View>
+                    <FontAwesome5 name="calendar-alt" size={24} color="white" />
+                    <View style={styles.dateTextContainer}>
+                        <Text style={styles.infoText}>{formattedDate}</Text>
+                        <Text style={styles.timeText}>{formattedTime}</Text>
                     </View>
                 </View>
             </View>
 
-            {/* Price, Invite Only Tags and Location */}
-            <View style={styles.addressContainer}>
+            {/* Price, Invite Only Tags and Organizer */}
+            <View style={styles.tagsOrganizerContainer}>
                 <View style={styles.tagsContainer}>
                     <View style={styles.tag}>
                         <Text style={styles.tagText}>${price}</Text>
@@ -78,15 +74,7 @@ const EventCard: React.FC<EventCardProps> = ({
                         </View>
                     )}
                 </View>
-                <View style={styles.infoRow}>
-                    <Ionicons name="location-outline" size={24} color="white" />
-                    <Text style={styles.infoText}>{location}</Text>
-                </View>
-            </View>
-
-            {/* Bottom row for organizer and participants */}
-            <View style={styles.bottomRow}>
-                {/* Organizer */}
+                {/* Organizer inline with tags */}
                 <View style={styles.organizerRow}>
                     <MaterialIcons name="person" size={24} color="white" />
                     <View style={styles.organizerTextContainer}>
@@ -94,9 +82,20 @@ const EventCard: React.FC<EventCardProps> = ({
                         <Text style={styles.organizerName}>{organizer}</Text>
                     </View>
                 </View>
+            </View>
 
-                {/* Participants */}
-                <View style={styles.infoRow}>
+            {/* Address and Participants */}
+            <View style={styles.addressParticipantsContainer}>
+                <View style={styles.addressContainer}>
+                    <Ionicons name="location-outline" size={24} color="white" />
+                    <Text style={styles.locationText} numberOfLines={2} ellipsizeMode="tail">
+                        {location}
+                    </Text>
+                    <TouchableOpacity onPress={() => handleCopy(location)}>
+                        <Feather name="copy" size={20} color="#FFD700" />
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.participantsContainer}>
                     <MaterialIcons name="groups" size={22} color="white" />
                     <Text style={styles.infoText}>Participants: {participants}</Text>
                 </View>
@@ -113,7 +112,7 @@ const EventCard: React.FC<EventCardProps> = ({
                     <Text style={styles.passcodeLabel}>Event Passcode:</Text>
                     <View style={styles.passcodeRow}>
                         <Text style={styles.passcodeText}>{passcode}</Text>
-                        <TouchableOpacity onPress={handleCopy}>
+                        <TouchableOpacity onPress={() => handleCopy(passcode)}>
                             <Feather name="clipboard" size={20} color="#FFD700" />
                         </TouchableOpacity>
                     </View>
@@ -122,6 +121,8 @@ const EventCard: React.FC<EventCardProps> = ({
         </View>
     );
 };
+
+const { width } = Dimensions.get("window"); // Get screen width
 
 const styles = StyleSheet.create({
     card: {
@@ -132,7 +133,6 @@ const styles = StyleSheet.create({
     timeText: {
         color: "white",
         fontSize: 14,
-        marginLeft: 8,  // Aligns time with some space after the date
     },
     title: {
         fontSize: 20,
@@ -146,11 +146,22 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     dateContainer: {
-        marginLeft: 10,
+        flexDirection: "row",
+        alignItems: "center",
     },
     dateTextContainer: {
         marginLeft: 8,
-        justifyContent: 'flex-start',
+        justifyContent: 'center', // Center the date and time vertically
+    },
+    infoText: {
+        color: "white",
+        fontSize: 14,
+    },
+    tagsOrganizerContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginTop: 10,
     },
     tagsContainer: {
         flexDirection: "row",
@@ -173,26 +184,6 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: "bold",
     },
-    addressContainer: {
-        flexDirection: "row",
-        justifyContent: "space-between", // Aligns the tags and location on the right
-        alignItems: "center",
-        marginTop: 10,
-    },
-    infoRow: {
-        flexDirection: "row",
-        alignItems: "center",
-    },
-    infoText: {
-        color: "white",
-        marginLeft: 8,
-        fontSize: 14,
-    },
-    bottomRow: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginTop: 12,
-    },
     organizerRow: {
         flexDirection: "row",
         alignItems: "center",
@@ -208,6 +199,29 @@ const styles = StyleSheet.create({
     organizerName: {
         fontSize: 14,
         color: "white",
+    },
+    addressParticipantsContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginTop: 10,
+    },
+    addressContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        flex: 1, // Takes up half the width
+        marginRight: 10, // Adds spacing between address and participants
+    },
+    locationText: {
+        color: "white",
+        marginLeft: 8,
+        fontSize: 14,
+        flex: 1, // Allows the text to wrap and take up available space
+        maxWidth: width * 0.4, // Limits address width to half the card's width
+    },
+    participantsContainer: {
+        flexDirection: "row",
+        alignItems: "center",
     },
     details: {
         color: "white",
