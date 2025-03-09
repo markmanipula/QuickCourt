@@ -7,8 +7,7 @@ interface EventCardProps {
     title: string;
     price: string;
     inviteOnly: boolean;
-    date: string;
-    time: string;
+    dateTime: Date;
     location: string;
     participants: string;
     organizer: string;
@@ -20,8 +19,7 @@ const EventCard: React.FC<EventCardProps> = ({
                                                  title,
                                                  price,
                                                  inviteOnly,
-                                                 date,
-                                                 time,
+                                                 dateTime,
                                                  location,
                                                  participants,
                                                  organizer,
@@ -44,8 +42,8 @@ const EventCard: React.FC<EventCardProps> = ({
                     <View style={styles.infoRow}>
                         <FontAwesome5 name="calendar-alt" size={24} color="white" />
                         <View style={styles.dateTextContainer}>
-                            <Text style={styles.infoText}>{date}</Text>
-                            <Text style={styles.infoText}>{time}</Text>
+                            <Text style={styles.infoText}>{dateTime.toLocaleDateString()}</Text>
+                            <Text style={styles.timeText}>{dateTime.toLocaleTimeString()}</Text>
                         </View>
                     </View>
                 </View>
@@ -117,6 +115,11 @@ const styles = StyleSheet.create({
         backgroundColor: "#5485bc",
         padding: 15,
         borderRadius: 15,
+    },
+    timeText: {
+        color: "white",
+        fontSize: 14,
+        marginTop: 4,  // Adds some space between the date and time
     },
     title: {
         fontSize: 20,

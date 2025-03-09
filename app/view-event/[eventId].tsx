@@ -375,8 +375,7 @@ export default function EventDetailsPage() {
                     title={event.title ?? "No Title"}
                     price={event.cost === 0 ? "Free" : event.cost.toString()}
                     inviteOnly={event.visibility === "invite-only"}
-                    date={event.date ? new Date(event.date).toLocaleDateString() : "TBA"}
-                    time={event.time ?? "TBA"}
+                    dateTime={event.dateTime ? new Date(event.dateTime) : new Date()}
                     location={event.location ?? "Unknown"}
                     participants={`${event.participants?.length ?? 0}/${event.maxParticipants ?? "N/A"}`}
                     organizer={event.organizer ?? "Unknown"}
