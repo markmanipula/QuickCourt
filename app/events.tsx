@@ -45,8 +45,7 @@ export default function EventsPage() {
                 const data = await response.json();
 
                 // Filter out past events
-                const upcomingEvents = data.filter((event: { date: string }) => new Date(event.date) >= new Date());
-
+                const upcomingEvents = data.filter((event: { dateTime: string }) => new Date(event.dateTime) >= new Date());
                 setEvents(upcomingEvents);
             } catch (err) {
                 setError('Failed to fetch events');
