@@ -147,7 +147,7 @@ export default function EditEventScreen() {
                 <ScrollView contentContainerStyle={styles.scrollContainer}>
                     <TouchableOpacity onPress={() => router.back()} style={styles.goBackButton}>
                         <View style={styles.backButtonContent}>
-                            <Ionicons name="arrow-back" size={24} color="#fff" />
+                            <Ionicons name="arrow-back" size={24} color="#2c2c2c" />
                             <Text style={styles.goBackText}>Back</Text>
                         </View>
                     </TouchableOpacity>
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
     goBackText: {
         fontSize: 18,
         fontWeight: "600",
-        color: "#fff",
+        color: "#2c2c2c",
         marginLeft: 8,
     },
     switchContainer: {
