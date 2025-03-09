@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     timeText: {
         color: "white",
         fontSize: 14,
-        marginTop: 4,  // Adds some space between the date and time
+        marginLeft: 8,  // Aligns time with some space after the date
     },
     title: {
         fontSize: 20,
