@@ -121,7 +121,9 @@ export default function CreateEventScreen() {
 
                     <Text style={styles.label}>Date & Time</Text>
                     <TouchableOpacity onPress={() => setShowPicker(true)} style={styles.input}>
-                        <Text>{dateTime ? dateTime.toLocaleString() : "Pick Date & Time"} </Text>
+                        <Text style={{ color: dateTime ? "black" : "#aaa" }}>
+                            {dateTime ? dateTime.toLocaleString() : "Pick Date & Time"}
+                        </Text>
                     </TouchableOpacity>
                     {showPicker ? (
                         <DateTimePicker
