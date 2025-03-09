@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Button, StyleSheet, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Switch } from "react-native";
+import { View, Text, TextInput, Button, StyleSheet, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Switch, Modal } from "react-native";
 import { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -19,6 +19,7 @@ export default function CreateEventScreen() {
     const [isInviteOnly, setIsInviteOnly] = useState(false);
     const [showPicker, setShowPicker] = useState(false);
     const [organizer, setOrganizer] = useState<any>(null);
+    const [tempDateTime, setTempDateTime] = useState<Date | null>(null); // Temporary date/time state
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -37,9 +38,20 @@ export default function CreateEventScreen() {
     }, []);
 
     const handleDateChange = (event: any, selectedDate: Date | undefined) => {
-        const currentDate = selectedDate || dateTime || new Date();
-        setShowPicker(false);
-        setDateTime(currentDate);
+        const currentDate = selectedDate || tempDateTime || new Date();
+        setTempDateTime(currentDate); // Update temporary date/time
+    };
+
+    const handleConfirmDateTime = () => {
+        if (tempDateTime) {
+            setDateTime(tempDateTime); // Set the final date/time
+        }
+        setShowPicker(false); // Close the modal
+    };
+
+    const handleCancelDateTime = () => {
+        setTempDateTime(null); // Reset temporary date/time
+        setShowPicker(false); // Close the modal
     };
 
     const handleSubmit = async () => {
@@ -125,14 +137,28 @@ export default function CreateEventScreen() {
                             {dateTime ? dateTime.toLocaleString() : "Pick Date & Time"}
                         </Text>
                     </TouchableOpacity>
-                    {showPicker ? (
-                        <DateTimePicker
-                            value={dateTime || new Date()} // Fallback to current date
-                            mode="datetime"
-                            display="default"
-                            onChange={handleDateChange}
-                        />
-                    ) : null}
+
+                    {/* Date/Time Picker Modal */}
+                    <Modal visible={showPicker} transparent={true} animationType="slide">
+                        <View style={styles.modalContainer}>
+                            <View style={styles.modalContent}>
+                                <DateTimePicker
+                                    value={tempDateTime || dateTime || new Date()} // Use temporary or final date/time
+                                    mode="datetime"
+                                    display="default"
+                                    onChange={handleDateChange}
+                                />
+                                <View style={styles.modalButtonsContainer}>
+                                    <TouchableOpacity onPress={handleCancelDateTime} style={styles.modalButton}>
+                                        <Text style={styles.modalButtonText}>Cancel</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={handleConfirmDateTime} style={styles.modalButton}>
+                                        <Text style={styles.modalButtonText}>Confirm</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </View>
+                    </Modal>
 
                     <Text style={styles.label}>Max Participants</Text>
                     <TextInput placeholder="Enter max participants" value={maxParticipants} onChangeText={setMaxParticipants} keyboardType="numeric" style={styles.input} />
@@ -189,7 +215,7 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         width: "100%",
         justifyContent: "center",
-        alignItems: "flex-start",  // Align text to the left
+        alignItems: "flex-start",
     },
     submitButton: {
         backgroundColor: "#ffa722",
@@ -227,5 +253,33 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         borderRadius: 10,
         padding: 10,
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+    },
+    modalContent: {
+        backgroundColor: "white",
+        borderRadius: 10,
+        padding: 20,
+        width: "90%",
+    },
+    modalButtonsContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginTop: 20,
+    },
+    modalButton: {
+        backgroundColor: "#ffa722",
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 8,
+    },
+    modalButtonText: {
+        color: "#fff",
+        fontSize: 16,
+        fontWeight: "600",
     },
 });
