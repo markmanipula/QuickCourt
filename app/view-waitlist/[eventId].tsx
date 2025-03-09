@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     participantName: {
         fontSize: 18,
         fontWeight: '500',
-        color: '#fff',
+        color: '#2c2c2c',
     },
     noParticipants: {
         fontSize: 16,

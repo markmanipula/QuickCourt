@@ -1,4 +1,4 @@
-export const API_BASE_URL = "http://192.168.0.30:5001"; // Primary Base URL
+export const API_BASE_URL = "http://10.0.0.9:5001"; // Primary Base URL
 
 export const ENDPOINTS = {
     EVENTS: `${API_BASE_URL}/events`,
