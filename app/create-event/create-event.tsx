@@ -5,18 +5,19 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/firebaseConfig";
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from "@expo/vector-icons";
-import {ENDPOINTS} from "@/app/utils/constants";
+import { ENDPOINTS } from "@/app/utils/constants";
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function CreateEventScreen() {
     const router = useRouter();
     const [title, setTitle] = useState("");
     const [location, setLocation] = useState("");
-    const [date, setDate] = useState("");
-    const [time, setTime] = useState("");
+    const [dateTime, setDateTime] = useState(new Date()); // Default to current date and time
     const [cost, setCost] = useState("");
     const [maxParticipants, setMaxParticipants] = useState("");
     const [details, setDetails] = useState("");
-    const [isInviteOnly, setIsInviteOnly] = useState(false); // New state for event privacy
+    const [isInviteOnly, setIsInviteOnly] = useState(false);
+    const [showPicker, setShowPicker] = useState(false);
     const [organizer, setOrganizer] = useState<any>(null);
 
     useEffect(() => {
@@ -35,60 +36,20 @@ export default function CreateEventScreen() {
         return () => unsubscribe();
     }, []);
 
-    const formatDateInput = (text: string) => {
-        let cleaned = text.replace(/\D/g, "");
-        if (cleaned.length === 0) {
-            setDate("");
-            return;
-        }
-
-        if (cleaned.length > 8) {
-            cleaned = cleaned.slice(0, 8);
-        }
-
-        let formattedDate = "";
-        if (cleaned.length <= 2) {
-            formattedDate = cleaned;
-        } else if (cleaned.length <= 4) {
-            formattedDate = `${cleaned.slice(0, 2)}/${cleaned.slice(2)}`;
-        } else {
-            formattedDate = `${cleaned.slice(0, 2)}/${cleaned.slice(2, 4)}/${cleaned.slice(4)}`;
-        }
-
-        setDate(formattedDate);
-    };
-
-    const formatTimeInput = (text: string) => {
-        let cleaned = text.replace(/\D/g, "");
-        if (cleaned.length === 0) {
-            setTime("");
-            return;
-        }
-
-        if (cleaned.length > 4) {
-            cleaned = cleaned.slice(0, 4);
-        }
-
-        let formattedTime = "";
-        if (cleaned.length <= 2) {
-            formattedTime = cleaned;
-        } else {
-            formattedTime = `${cleaned.slice(0, 2)}:${cleaned.slice(2)}`;
-        }
-
-        setTime(formattedTime);
+    const handleDateChange = (event: any, selectedDate: Date | undefined) => {
+        const currentDate = selectedDate || dateTime;
+        setShowPicker(false); // Hide the picker
+        setDateTime(currentDate); // Set the new date/time
     };
 
     const handleSubmit = async () => {
-        if (!title || !location || !date || !time || !maxParticipants || !cost || !organizer) {
+        if (!title || !location || !maxParticipants || !cost || !organizer) {
             alert("Please fill out all required fields.");
             return;
         }
 
         const organizerName = `${organizer.firstName} ${organizer.lastName}`;
-        const [month, day, year] = date.split("/");
-        const formattedDate = `${year}-${month}-${day}`;
-        const eventDateTime = new Date(`${formattedDate}T${time}:00`);
+        const eventDateTime = new Date(dateTime);
 
         if (isNaN(eventDateTime.getTime())) {
             alert("Invalid date or time format. Please enter a valid date and time.");
@@ -104,18 +65,17 @@ export default function CreateEventScreen() {
         const eventData = {
             title,
             location,
-            date,
-            time,
+            dateTime: eventDateTime.toISOString(), // Send the date as an ISO string
             maxParticipants,
             cost,
             details: details || "N/A",
             organizer: organizerName,
-            visibility: isInviteOnly ? "invite-only" : "public", // Use visibility instead of isInviteOnly
+            visibility: isInviteOnly ? "invite-only" : "public",
         };
 
         try {
             console.log("Logging event data:", eventData);
-            const response = await fetch(ENDPOINTS.EVENTS , {
+            const response = await fetch(ENDPOINTS.EVENTS, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -159,11 +119,18 @@ export default function CreateEventScreen() {
                     <Text style={styles.label}>Address</Text>
                     <TextInput placeholder="Enter address" value={location} onChangeText={setLocation} style={styles.input} />
 
-                    <Text style={styles.label}>Date</Text>
-                    <TextInput placeholder="MM/DD/YYYY" value={date} onChangeText={formatDateInput} keyboardType="numeric" style={styles.input} maxLength={10} />
-
-                    <Text style={styles.label}>Time</Text>
-                    <TextInput placeholder="HH:MM" value={time} onChangeText={formatTimeInput} keyboardType="numeric" style={styles.input} maxLength={5} />
+                    <Text style={styles.label}>Date & Time</Text>
+                    <TouchableOpacity onPress={() => setShowPicker(true)} style={styles.input}>
+                        <Text>{dateTime.toLocaleString()}</Text> {/* Display the formatted date */}
+                    </TouchableOpacity>
+                    {showPicker && (
+                        <DateTimePicker
+                            value={dateTime}
+                            mode="datetime"
+                            display="default"
+                            onChange={handleDateChange}
+                        />
+                    )}
 
                     <Text style={styles.label}>Max Participants</Text>
                     <TextInput placeholder="Enter max participants" value={maxParticipants} onChangeText={setMaxParticipants} keyboardType="numeric" style={styles.input} />
@@ -192,11 +159,11 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
-        paddingLeft: 24,  // Added padding to move content left
+        paddingLeft: 24,
         backgroundColor: "#f9f9f9",
     },
     scrollContainer: {
-        paddingBottom: 32,  // Added padding to bottom of the ScrollView for a more comfortable scroll
+        paddingBottom: 32,
     },
     heading: {
         fontSize: 24,
@@ -218,7 +185,9 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         fontSize: 16,
         marginBottom: 16,
-        width: "100%",  // Full width for inputs
+        width: "100%",
+        justifyContent: "center", // Center the text inside
+        alignItems: "center", // Center the text vertically
     },
     submitButton: {
         backgroundColor: "#ffa722",
@@ -233,19 +202,19 @@ const styles = StyleSheet.create({
         fontWeight: "600",
     },
     goBackButton: {
-        flexDirection: "row", // Aligns the icon and text in a row
-        alignItems: "center", // Centers them vertically
+        flexDirection: "row",
+        alignItems: "center",
         marginBottom: 16,
     },
     backButtonContent: {
-        flexDirection: "row", // Makes sure icon and text are in the same row
+        flexDirection: "row",
         alignItems: "center",
     },
     goBackText: {
         fontSize: 18,
         fontWeight: "600",
         color: "#2c2c2c",
-        marginLeft: 8, // Adds space between the icon and the text
+        marginLeft: 8,
     },
     switchContainer: {
         flexDirection: "row",
@@ -253,7 +222,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginVertical: 10,
         paddingHorizontal: 10,
-        backgroundColor: "#fff", // Light background for contrast
+        backgroundColor: "#fff",
         borderRadius: 10,
         padding: 10,
     },
