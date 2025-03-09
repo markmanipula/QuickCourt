@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Button, StyleSheet, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Switch } from "react-native";
+import { View, Text, TextInput, Button, StyleSheet, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Switch, Modal } from "react-native";
 import { useState, useEffect } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -6,20 +6,22 @@ import { auth } from "@/firebaseConfig";
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from "@expo/vector-icons";
 import { ENDPOINTS } from "../utils/api-routes";
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function EditEventScreen() {
     const router = useRouter();
     const { eventId } = useLocalSearchParams();
     const [title, setTitle] = useState("");
     const [location, setLocation] = useState("");
-    const [date, setDate] = useState("");
-    const [time, setTime] = useState("");
+    const [dateTime, setDateTime] = useState<Date | null>(null); // Combined date and time
     const [cost, setCost] = useState("");
     const [maxParticipants, setMaxParticipants] = useState("");
     const [details, setDetails] = useState("");
     const [organizer, setOrganizer] = useState<any>(null);
     const [currentParticipants, setCurrentParticipants] = useState(0);
-    const [inviteOnly, setInviteOnly] = useState(false); // Added state for Invite Only
+    const [inviteOnly, setInviteOnly] = useState(false);
+    const [showPicker, setShowPicker] = useState(false); // For date/time picker modal
+    const [tempDateTime, setTempDateTime] = useState<Date | null>(null); // Temporary date/time state
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -42,13 +44,12 @@ export default function EditEventScreen() {
                 if (data) {
                     setTitle(data.title);
                     setLocation(data.location);
-                    setDate(new Date(data.date).toLocaleDateString("en-US"));
-                    setTime(data.time);
+                    setDateTime(new Date(data.dateTime)); // Use combined date/time
                     setCost(data.cost.toString());
                     setMaxParticipants(data.maxParticipants.toString());
                     setDetails(data.details || "");
                     setCurrentParticipants(data.participants.length || 0);
-                    setInviteOnly(data.visibility === "invite-only"); // Set the toggle based on the event data
+                    setInviteOnly(data.visibility === "invite-only");
                     console.log("Fetched event data:", data);
                 }
             } catch (error) {
@@ -61,52 +62,25 @@ export default function EditEventScreen() {
         return () => unsubscribe();
     }, [eventId]);
 
-    const formatDateInput = (text: string) => {
-        let cleaned = text.replace(/\D/g, "");
-        if (cleaned.length === 0) {
-            setDate("");
-            return;
-        }
-
-        if (cleaned.length > 8) {
-            cleaned = cleaned.slice(0, 8);
-        }
-
-        let formattedDate = "";
-        if (cleaned.length <= 2) {
-            formattedDate = cleaned;
-        } else if (cleaned.length <= 4) {
-            formattedDate = `${cleaned.slice(0, 2)}/${cleaned.slice(2)}`;
-        } else {
-            formattedDate = `${cleaned.slice(0, 2)}/${cleaned.slice(2, 4)}/${cleaned.slice(4)}`;
-        }
-
-        setDate(formattedDate);
+    const handleDateChange = (event: any, selectedDate: Date | undefined) => {
+        const currentDate = selectedDate || tempDateTime || new Date();
+        setTempDateTime(currentDate); // Update temporary date/time
     };
 
-    const formatTimeInput = (text: string) => {
-        let cleaned = text.replace(/\D/g, "");
-        if (cleaned.length === 0) {
-            setTime("");
-            return;
+    const handleConfirmDateTime = () => {
+        if (tempDateTime) {
+            setDateTime(tempDateTime); // Set the final date/time
         }
+        setShowPicker(false); // Close the modal
+    };
 
-        if (cleaned.length > 4) {
-            cleaned = cleaned.slice(0, 4);
-        }
-
-        let formattedTime = "";
-        if (cleaned.length <= 2) {
-            formattedTime = cleaned;
-        } else {
-            formattedTime = `${cleaned.slice(0, 2)}:${cleaned.slice(2)}`;
-        }
-
-        setTime(formattedTime);
+    const handleCancelDateTime = () => {
+        setTempDateTime(null); // Reset temporary date/time
+        setShowPicker(false); // Close the modal
     };
 
     const handleSubmit = async () => {
-        if (!title || !location || !date || !time || !maxParticipants || !cost || !organizer) {
+        if (!title || !location || !maxParticipants || !cost || !organizer || !dateTime) {
             alert("Please fill out all required fields.");
             return;
         }
@@ -116,12 +90,7 @@ export default function EditEventScreen() {
             return;
         }
 
-        // Convert MM/DD/YYYY to YYYY-MM-DD for proper Date parsing
-        const [month, day, year] = date.split("/");
-        const formattedDate = `${year}-${month}-${day}`;
-
-        // Construct an ISO-compliant date-time string
-        const eventDateTime = new Date(`${formattedDate}T${time}:00`);
+        const eventDateTime = new Date(dateTime);
 
         if (isNaN(eventDateTime.getTime())) {
             alert("Invalid date or time format. Please enter a valid date and time.");
@@ -129,7 +98,6 @@ export default function EditEventScreen() {
         }
 
         const currentDateTime = new Date();
-
         if (eventDateTime < currentDateTime) {
             alert("The event date and time cannot be in the past.");
             return;
@@ -140,13 +108,12 @@ export default function EditEventScreen() {
         const eventData = {
             title,
             location,
-            date,
-            time,
+            dateTime: eventDateTime.toISOString(), // Use ISO string for consistency
             maxParticipants,
             cost,
             details: details || "N/A",
             organizer: organizerName,
-            visibility: inviteOnly ? "invite-only" : "public", // Use visibility instead of isInviteOnly
+            visibility: inviteOnly ? "invite-only" : "public",
         };
 
         console.log("submitted", eventData);
@@ -166,7 +133,7 @@ export default function EditEventScreen() {
             }
 
             const data = await response.json();
-            alert(`Event Updated:\n\nTitle: ${data.title}\nAddress: ${data.location}\nDate: ${data.date}\nTime: ${data.time}\nMax Participants: ${data.maxParticipants}\nCost: ${data.cost}\nDetails: ${data.details || "N/A"}\nOrganizer: ${organizerName}\n${data.visibility}`);
+            alert(`Event Updated`);
             router.back();
         } catch (error) {
             console.error("Error updating event:", error);
@@ -175,10 +142,7 @@ export default function EditEventScreen() {
     };
 
     return (
-        <KeyboardAvoidingView
-            style={{ flex: 1 }}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        >
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
             <LinearGradient colors={['#d4eaf7', '#a9d6eb', '#f5faff']} style={styles.container}>
                 <ScrollView contentContainerStyle={styles.scrollContainer}>
                     <TouchableOpacity onPress={() => router.back()} style={styles.goBackButton}>
@@ -191,74 +155,52 @@ export default function EditEventScreen() {
                     <Text style={styles.heading}>Edit Event</Text>
 
                     <Text style={styles.label}>Event Title</Text>
-                    <TextInput
-                        placeholder="Enter event title"
-                        value={title}
-                        onChangeText={setTitle}
-                        style={styles.input}
-                    />
+                    <TextInput placeholder="Enter event title" value={title} onChangeText={setTitle} style={styles.input} />
 
                     <Text style={styles.label}>Address</Text>
-                    <TextInput
-                        placeholder="Enter address"
-                        value={location}
-                        onChangeText={setLocation}
-                        style={styles.input}
-                    />
+                    <TextInput placeholder="Enter address" value={location} onChangeText={setLocation} style={styles.input} />
 
-                    <Text style={styles.label}>Date</Text>
-                    <TextInput
-                        placeholder="MM/DD/YYYY"
-                        value={date}
-                        onChangeText={formatDateInput}
-                        keyboardType="numeric"
-                        style={styles.input}
-                        maxLength={10}
-                    />
+                    <Text style={styles.label}>Date & Time</Text>
+                    <TouchableOpacity onPress={() => setShowPicker(true)} style={styles.input}>
+                        <Text style={{ color: dateTime ? "black" : "#aaa" }}>
+                            {dateTime ? dateTime.toLocaleString() : "Pick Date & Time"}
+                        </Text>
+                    </TouchableOpacity>
 
-                    <Text style={styles.label}>Time</Text>
-                    <TextInput
-                        placeholder="HH:MM"
-                        value={time}
-                        onChangeText={formatTimeInput}
-                        keyboardType="numeric"
-                        style={styles.input}
-                        maxLength={5}
-                    />
+                    {/* Date/Time Picker Modal */}
+                    <Modal visible={showPicker} transparent={true} animationType="slide">
+                        <View style={styles.modalContainer}>
+                            <View style={styles.modalContent}>
+                                <DateTimePicker
+                                    value={tempDateTime || dateTime || new Date()} // Use temporary or final date/time
+                                    mode="datetime"
+                                    display="default"
+                                    onChange={handleDateChange}
+                                />
+                                <View style={styles.modalButtonsContainer}>
+                                    <TouchableOpacity onPress={handleCancelDateTime} style={styles.modalButton}>
+                                        <Text style={styles.modalButtonText}>Cancel</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={handleConfirmDateTime} style={styles.modalButton}>
+                                        <Text style={styles.modalButtonText}>Confirm</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </View>
+                    </Modal>
 
                     <Text style={styles.label}>Max Participants</Text>
-                    <TextInput
-                        placeholder="Enter max participants"
-                        value={maxParticipants}
-                        onChangeText={setMaxParticipants}
-                        keyboardType="numeric"
-                        style={styles.input}
-                    />
+                    <TextInput placeholder="Enter max participants" value={maxParticipants} onChangeText={setMaxParticipants} keyboardType="numeric" style={styles.input} />
 
                     <Text style={styles.label}>Cost ($)</Text>
-                    <TextInput
-                        placeholder="Enter cost"
-                        value={cost}
-                        onChangeText={setCost}
-                        keyboardType="numeric"
-                        style={styles.input}
-                    />
+                    <TextInput placeholder="Enter cost" value={cost} onChangeText={setCost} keyboardType="numeric" style={styles.input} />
 
                     <Text style={styles.label}>Details (Optional)</Text>
-                    <TextInput
-                        placeholder="Enter additional details"
-                        value={details}
-                        onChangeText={setDetails}
-                        style={styles.input}
-                    />
+                    <TextInput placeholder="Enter additional details" value={details} onChangeText={setDetails} style={styles.input} />
 
                     <View style={styles.switchContainer}>
                         <Text style={styles.label}>Invite-Only</Text>
-                        <Switch
-                            value={inviteOnly}
-                            onValueChange={setInviteOnly}
-                            style={styles.switch}
-                        />
+                        <Switch value={inviteOnly} onValueChange={setInviteOnly} />
                     </View>
 
                     <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
@@ -301,22 +243,8 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginBottom: 16,
         width: "100%",
-    },
-    switchContainer: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginVertical: 10,
-        paddingHorizontal: 10,
-        backgroundColor: "#fff", // Light background for contrast
-        borderRadius: 10,
-        padding: 10,
-    },
-    switchText: {
-        fontSize: 16,
-    },
-    switch: {
-        transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }],
+        justifyContent: "center",
+        alignItems: "flex-start",
     },
     submitButton: {
         backgroundColor: "#ffa722",
@@ -344,5 +272,43 @@ const styles = StyleSheet.create({
         fontWeight: "600",
         color: "#fff",
         marginLeft: 8,
+    },
+    switchContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginVertical: 10,
+        paddingHorizontal: 10,
+        backgroundColor: "#fff",
+        borderRadius: 10,
+        padding: 10,
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+    },
+    modalContent: {
+        backgroundColor: "white",
+        borderRadius: 10,
+        padding: 20,
+        width: "90%",
+    },
+    modalButtonsContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginTop: 20,
+    },
+    modalButton: {
+        backgroundColor: "#ffa722",
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 8,
+    },
+    modalButtonText: {
+        color: "#fff",
+        fontSize: 16,
+        fontWeight: "600",
     },
 });
