@@ -46,20 +46,11 @@ const EventCard: React.FC<EventCardProps> = ({
 
     return (
         <View style={styles.card}>
-            {/* Event Title and Date */}
-            <View style={styles.headerContainer}>
-                <Text style={styles.title}>{title}</Text>
-                <View style={styles.dateContainer}>
-                    <FontAwesome5 name="calendar-alt" size={24} color="white" />
-                    <View style={styles.dateTextContainer}>
-                        <Text style={styles.infoText}>{formattedDate}</Text>
-                        <Text style={styles.timeText}>{formattedTime}</Text>
-                    </View>
-                </View>
-            </View>
+            {/* Header */}
+            <Text style={styles.title}>{title}</Text>
 
-            {/* Price, Invite Only Tags and Organizer */}
-            <View style={styles.tagsOrganizerContainer}>
+            {/* Price, Invite-Only, and Date/Time */}
+            <View style={styles.topRow}>
                 <View style={styles.tagsContainer}>
                     <View style={styles.tag}>
                         <Text style={styles.tagText}>${price}</Text>
@@ -74,7 +65,17 @@ const EventCard: React.FC<EventCardProps> = ({
                         </View>
                     )}
                 </View>
-                {/* Organizer inline with tags */}
+                <View style={styles.dateTimeContainer}>
+                    <FontAwesome5 name="calendar-alt" size={24} color="white" />
+                    <View style={styles.dateTextContainer}>
+                        <Text style={styles.infoText}>{formattedDate}</Text>
+                        <Text style={styles.timeText}>{formattedTime}</Text>
+                    </View>
+                </View>
+            </View>
+
+            {/* Organizer and Participants */}
+            <View style={styles.middleRow}>
                 <View style={styles.organizerRow}>
                     <MaterialIcons name="person" size={24} color="white" />
                     <View style={styles.organizerTextContainer}>
@@ -82,23 +83,21 @@ const EventCard: React.FC<EventCardProps> = ({
                         <Text style={styles.organizerName}>{organizer}</Text>
                     </View>
                 </View>
-            </View>
-
-            {/* Address and Participants */}
-            <View style={styles.addressParticipantsContainer}>
-                <View style={styles.addressContainer}>
-                    <Ionicons name="location-outline" size={24} color="white" />
-                    <Text style={styles.locationText} numberOfLines={2} ellipsizeMode="tail">
-                        {location}
-                    </Text>
-                    <TouchableOpacity onPress={() => handleCopy(location)}>
-                        <Feather name="copy" size={20} color="#FFD700" />
-                    </TouchableOpacity>
-                </View>
                 <View style={styles.participantsContainer}>
                     <MaterialIcons name="groups" size={22} color="white" />
                     <Text style={styles.infoText}>Participants: {participants}</Text>
                 </View>
+            </View>
+
+            {/* Address and Copy Icon */}
+            <View style={styles.addressContainer}>
+                <Ionicons name="location-outline" size={24} color="white" />
+                <Text style={styles.locationText} numberOfLines={2} ellipsizeMode="tail">
+                    {location}
+                </Text>
+                <TouchableOpacity onPress={() => handleCopy(location)}>
+                    <Feather name="copy" size={20} color="#FFD700" />
+                </TouchableOpacity>
             </View>
 
             {/* Description */}
@@ -130,38 +129,17 @@ const styles = StyleSheet.create({
         padding: 15,
         borderRadius: 15,
     },
-    timeText: {
-        color: "white",
-        fontSize: 14,
-    },
     title: {
         fontSize: 20,
         fontWeight: "bold",
         color: "white",
-        flex: 1,
+        marginBottom: 10, // Adds spacing below the title
     },
-    headerContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    dateContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-    },
-    dateTextContainer: {
-        marginLeft: 8,
-        justifyContent: 'center', // Center the date and time vertically
-    },
-    infoText: {
-        color: "white",
-        fontSize: 14,
-    },
-    tagsOrganizerContainer: {
+    topRow: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        marginTop: 10,
+        marginBottom: 10, // Adds spacing below the top row
     },
     tagsContainer: {
         flexDirection: "row",
@@ -184,6 +162,27 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: "bold",
     },
+    dateTimeContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    dateTextContainer: {
+        marginLeft: 8,
+    },
+    infoText: {
+        color: "white",
+        fontSize: 14,
+    },
+    timeText: {
+        color: "white",
+        fontSize: 14,
+    },
+    middleRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 10, // Adds spacing below the middle row
+    },
     organizerRow: {
         flexDirection: "row",
         alignItems: "center",
@@ -200,28 +199,20 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: "white",
     },
-    addressParticipantsContainer: {
+    participantsContainer: {
         flexDirection: "row",
-        justifyContent: "space-between",
         alignItems: "center",
-        marginTop: 10,
     },
     addressContainer: {
         flexDirection: "row",
         alignItems: "center",
-        flex: 1, // Takes up half the width
-        marginRight: 10, // Adds spacing between address and participants
     },
     locationText: {
         color: "white",
         marginLeft: 8,
         fontSize: 14,
         flex: 1, // Allows the text to wrap and take up available space
-        maxWidth: width * 0.4, // Limits address width to half the card's width
-    },
-    participantsContainer: {
-        flexDirection: "row",
-        alignItems: "center",
+        maxWidth: width * 0.7, // Limits address width to 70% of the card's width
     },
     details: {
         color: "white",
