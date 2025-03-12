@@ -22,6 +22,8 @@ expo-env.d.ts
 ios/
 firebaseConfig.ts
 
+android
+
 # Metro
 .metro-health-check*
 
