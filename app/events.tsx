@@ -135,7 +135,7 @@ export default function EventsPage() {
                         >
                             <Text style={styles.eventTitle}>{event.title || "No Title"}</Text>
                             <Text style={styles.eventOrganizer}>Organizer: {event.organizer || "No Organizer"}</Text>
-                            <Text style={styles.eventDate}>Date: {event.date ? new Date(event.date).toLocaleDateString() : "No Date"}</Text>
+                            <Text style={styles.eventDate}>Date: {event.dateTime ? new Date(event.dateTime).toLocaleDateString() : "No Date"}</Text>
                             <Text style={styles.eventType}>{event.visibility ?? "N/A"}</Text>
                         </TouchableOpacity>
                     ))
