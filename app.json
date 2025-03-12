@@ -19,7 +19,9 @@
       "bundler": "metro",
       "output": "static"
     },
-    "plugins": [],
+    "plugins": [
+      "expo-build-properties"
+    ],
     "experiments": {
       "typedRoutes": true
     },
