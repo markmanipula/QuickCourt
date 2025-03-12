@@ -1,12 +1,13 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true,
+    "baseUrl": ".",  // Set to the root folder
     "paths": {
-      "@/*": [
-        "./*"
-      ]
-    }
+      "@/*": ["*"]  // Use this to resolve from the root folder
+    },
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true
   },
   "include": [
     "**/*.ts",
